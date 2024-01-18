@@ -23,7 +23,7 @@ const Nav = () => {
 
 export const Header = () => {
   return (
-    <div className="sticky top-0 bg-[rgba(255,255,255,.5)] bg-white backdrop-blur">
+    <div className="sticky top-0 bg-[rgba(255,255,255,.5)] backdrop-blur">
       <header className="flex justify-between px-32 py-4">
         <div className="flex items-center gap-3">
           <Avatar className="cursor-pointer">
