@@ -17,9 +17,9 @@ export const header = [
   },
 ];
 
-const socialMediaLinks = {
+export const socialMediaLinks = {
   github: "https://github.com/kujo205",
   telegram: "https://t.me/kujo205",
-  linkedin: "https://www.linkedin.com/in/kujo205/",
+  linkedin: "https://www.linkedin.com/in/ivan-kuts-a52114199/",
   instagram: "https://www.instagram.com/kujo205/",
 };

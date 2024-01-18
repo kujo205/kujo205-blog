@@ -1,5 +1,5 @@
 import "@/styles/globals.css";
-import { Header } from "@/components/navigation";
+import { Header } from "@/components/navagiation";
 
 import { Inter } from "next/font/google";
 
@@ -28,6 +28,7 @@ export default function RootLayout({
       >
         <TRPCReactProvider>
           <Header />
+          {children}
         </TRPCReactProvider>
       </body>
     </html>
