@@ -1,4 +1,5 @@
 import "@/styles/globals.css";
+import { Header } from "@/components/navigation";
 
 import { Inter } from "next/font/google";
 
@@ -22,8 +23,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`font-sans ${inter.variable}`}>
-        <TRPCReactProvider>{children}</TRPCReactProvider>
+      <body
+        className={`font-sans ${inter.variable} flex min-h-screen flex-col`}
+      >
+        <TRPCReactProvider>
+          <Header />
+        </TRPCReactProvider>
       </body>
     </html>
   );
