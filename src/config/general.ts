@@ -16,3 +16,10 @@ export const header = [
     url: "/projects",
   },
 ];
+
+const socialMediaLinks = {
+  github: "https://github.com/kujo205",
+  telegram: "https://t.me/kujo205",
+  linkedin: "https://www.linkedin.com/in/kujo205/",
+  instagram: "https://www.instagram.com/kujo205/",
+};
