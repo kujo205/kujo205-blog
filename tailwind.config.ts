@@ -18,6 +18,9 @@ const config = {
       },
     },
     extend: {
+      content: {
+        "violet-bullet-point": "url('/misc/violet-bullet-point.svg')",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -27,7 +27,6 @@ Progress.displayName = ProgressPrimitive.Root.displayName;
 
 const NavProgressBar = () => {
   const [value, setValue] = React.useState(0);
-  //TODO: scroll bar is not working correctly
 
   React.useEffect(() => {
     window.addEventListener("scroll", () => {
