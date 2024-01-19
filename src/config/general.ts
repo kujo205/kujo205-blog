@@ -8,7 +8,7 @@ export const header = [
     url: "/posts",
   },
   {
-    name: "React me out",
+    name: "Reach me out",
     url: "/contacts",
   },
   {
