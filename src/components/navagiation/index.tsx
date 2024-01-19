@@ -81,6 +81,8 @@ const SocialMedia = () => {
   );
 };
 export const Footer = () => {
+  const curentYear = new Date().getFullYear();
+
   return (
     <footer className="flex flex-col bg-black px-[120px] py-12 font-bold text-white">
       <section className="flex justify-between">
@@ -99,7 +101,7 @@ export const Footer = () => {
       </section>
       <Separator className="bg-gray-700" />
       <section className="pt-9 text-center">
-        © Copyright 2024. Made with ❤️
+        © Copyright {curentYear}. Made with ❤️
       </section>
     </footer>
   );
