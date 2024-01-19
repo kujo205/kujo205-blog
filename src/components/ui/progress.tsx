@@ -27,13 +27,18 @@ Progress.displayName = ProgressPrimitive.Root.displayName;
 
 const NavProgressBar = () => {
   const [value, setValue] = React.useState(0);
+  //TODO: scroll bar is not working correctly
 
   React.useEffect(() => {
     window.addEventListener("scroll", () => {
+      const documentHeight = document.body.getBoundingClientRect().height;
       const windowHeight = window.innerHeight;
-      const pageHeight = window.scrollY;
+      const scrollY = window.scrollY;
 
-      const scrolledInPercents = (pageHeight / windowHeight) * 100;
+      const startPoint = windowHeight / 2;
+      const endPoint = documentHeight - windowHeight / 2;
+
+      const scrolledInPercents = (scrollY / (endPoint - startPoint)) * 100;
 
       setValue(scrolledInPercents);
     });
