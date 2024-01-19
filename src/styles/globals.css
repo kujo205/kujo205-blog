@@ -77,3 +77,8 @@
     display: none;
   }
 }
+
+.accent-text{
+  color:#563BB6;
+  @apply font-bold;
+}
