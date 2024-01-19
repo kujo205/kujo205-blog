@@ -43,7 +43,7 @@ export const Footer = () => {
         <div>
           <p className="text-2xl uppercase ">ivan kuts</p>
           <p className="text-base font-medium">
-            An ambitious fully-stacked developer
+            An ambitious fully-stacked web-developer
           </p>
         </div>
         <div>
