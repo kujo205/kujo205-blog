@@ -39,7 +39,6 @@ const NavProgressBar = () => {
     });
   }, []);
 
-  console.log(<Progress value={value} />);
   return <Progress value={value} />;
 };
 

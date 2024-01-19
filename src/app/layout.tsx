@@ -1,6 +1,7 @@
 import "@/styles/globals.css";
-import { Header, Footer } from "@/components/navagiation";
+import { Header } from "@/components/navagiation/header";
 
+import { Footer } from "@/components/navagiation/footer";
 import { Inter } from "next/font/google";
 
 import { TRPCReactProvider } from "@/trpc/react";
