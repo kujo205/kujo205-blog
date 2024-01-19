@@ -1,11 +1,13 @@
 import Image, { type ImageProps } from "next/image";
-
 type TImageProps = Omit<ImageProps, "src" | "alt">;
 const Github = (props: TImageProps) => (
   <Image {...props} src="/icons/github.svg" alt="github"></Image>
 );
-const Linkedin = (props: TImageProps) => (
-  <Image {...props} src="/icons/linkedin.svg" alt="linkedin"></Image>
+const Linkedin = ({
+  color = "light",
+  ...props
+}: TImageProps & { color?: "light" | "dark" }) => (
+  <Image {...props} src={`/icons/linkedin-${color}.svg`} alt="linkedin"></Image>
 );
 
 const Telegram = (props: TImageProps) => (
