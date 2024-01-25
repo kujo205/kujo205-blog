@@ -1,23 +1,26 @@
 import { relations, sql } from "drizzle-orm";
 import {
   bigint,
-  index,
   int,
   mysqlTableCreator,
   primaryKey,
   text,
   timestamp,
   varchar,
+  mysqlEnum,
 } from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
-/**
- * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
- * database instance for multiple projects.
- *
- * @see https://orm.drizzle.team/docs/goodies#multi-project-schema
- */
 export const mysqlTable = mysqlTableCreator((name) => `kujo205-blog_${name}`);
+
+export const postTags = mysqlTable("postTag", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }),
+});
+
+export const blogPoTagsRelations = relations(postTags, ({ many }) => ({
+  blogPost: many(blogPosts),
+}));
 
 export const blogPosts = mysqlTable("blogPost", {
   id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
@@ -32,15 +35,31 @@ export const blogPosts = mysqlTable("blogPost", {
 });
 
 export const blogPostsRelations = relations(blogPosts, ({ one, many }) => ({
+  user: one(users),
   comments: many(comments),
+  tags: many(postTags),
 }));
+
+export const blogPostsTags = mysqlTable("blogPostTag", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  blogPostId: bigint("blogPostId", { mode: "number" }).notNull(),
+  tagId: bigint("tagId", { mode: "number" }).notNull(),
+});
+
+export const blogPostsTagsRelations = relations(blogPostsTags, ({ one }) => ({
+  blogPost: one(blogPosts),
+  tag: one(blogPostsTags),
+}));
+
 export const comments = mysqlTable("comment", {
   id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  content: text("content"),
+  replyTo: bigint("replyTo", { mode: "number" }),
+  content: varchar("content", { length: 5000 }),
 });
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
   user: one(users),
+  replyTo: one(comments),
 }));
 
 export const users = mysqlTable("user", {
@@ -52,7 +71,15 @@ export const users = mysqlTable("user", {
     fsp: 3,
   }).defaultNow(),
   image: varchar("image", { length: 255 }),
+  role: mysqlEnum("role", ["ADMIN", "COMMENTATOR"]).default("COMMENTATOR"),
 });
+
+export const usersRelations = relations(users, ({ many }) => ({
+  blogPosts: many(blogPosts),
+  comments: many(comments),
+  sessions: many(sessions),
+  verificationTokens: many(verificationTokens),
+}));
 
 export const accounts = mysqlTable(
   "account",
