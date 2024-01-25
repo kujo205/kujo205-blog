@@ -19,22 +19,29 @@ import { type AdapterAccount } from "next-auth/adapters";
  */
 export const mysqlTable = mysqlTableCreator((name) => `kujo205-blog_${name}`);
 
-export const posts = mysqlTable(
-  "post",
-  {
-    id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-    name: varchar("name", { length: 256 }),
-    createdById: varchar("createdById", { length: 255 }).notNull(),
-    createdAt: timestamp("created_at")
-      .default(sql`CURRENT_TIMESTAMP`)
-      .notNull(),
-    updatedAt: timestamp("updatedAt").onUpdateNow(),
-  },
-  (example) => ({
-    createdByIdIdx: index("createdById_idx").on(example.createdById),
-    nameIndex: index("name_idx").on(example.name),
-  })
-);
+export const blogPosts = mysqlTable("blogPost", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  title: varchar("title", { length: 256 }),
+  content: text("content"),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+  likes: int("likes").default(0),
+  watched: int("watched").default(0),
+});
+
+export const blogPostsRelations = relations(blogPosts, ({ one, many }) => ({
+  comments: many(comments),
+}));
+export const comments = mysqlTable("comment", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  content: text("content"),
+});
+
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  user: one(users),
+}));
 
 export const users = mysqlTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
@@ -43,14 +50,9 @@ export const users = mysqlTable("user", {
   emailVerified: timestamp("emailVerified", {
     mode: "date",
     fsp: 3,
-  }).default(sql`CURRENT_TIMESTAMP(3)`),
+  }).defaultNow(),
   image: varchar("image", { length: 255 }),
 });
-
-export const usersRelations = relations(users, ({ many }) => ({
-  accounts: many(accounts),
-  sessions: many(sessions),
-}));
 
 export const accounts = mysqlTable(
   "account",
@@ -61,40 +63,33 @@ export const accounts = mysqlTable(
       .notNull(),
     provider: varchar("provider", { length: 255 }).notNull(),
     providerAccountId: varchar("providerAccountId", { length: 255 }).notNull(),
-    refresh_token: text("refresh_token"),
-    access_token: text("access_token"),
+    refresh_token: varchar("refresh_token", { length: 255 }),
+    access_token: varchar("access_token", { length: 255 }),
     expires_at: int("expires_at"),
     token_type: varchar("token_type", { length: 255 }),
     scope: varchar("scope", { length: 255 }),
-    id_token: text("id_token"),
+    id_token: varchar("id_token", { length: 2048 }),
     session_state: varchar("session_state", { length: 255 }),
   },
   (account) => ({
-    compoundKey: primaryKey(account.provider, account.providerAccountId),
-    userIdIdx: index("userId_idx").on(account.userId),
-  })
+    compoundKey: primaryKey({
+      columns: [account.provider, account.providerAccountId],
+    }),
+  }),
 );
 
 export const accountsRelations = relations(accounts, ({ one }) => ({
-  user: one(users, { fields: [accounts.userId], references: [users.id] }),
+  user: one(users),
 }));
 
-export const sessions = mysqlTable(
-  "session",
-  {
-    sessionToken: varchar("sessionToken", { length: 255 })
-      .notNull()
-      .primaryKey(),
-    userId: varchar("userId", { length: 255 }).notNull(),
-    expires: timestamp("expires", { mode: "date" }).notNull(),
-  },
-  (session) => ({
-    userIdIdx: index("userId_idx").on(session.userId),
-  })
-);
+export const sessions = mysqlTable("session", {
+  sessionToken: varchar("sessionToken", { length: 255 }).notNull().primaryKey(),
+  userId: varchar("userId", { length: 255 }).notNull(),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
+});
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({
-  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+  user: one(users),
 }));
 
 export const verificationTokens = mysqlTable(
@@ -105,6 +100,6 @@ export const verificationTokens = mysqlTable(
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
   (vt) => ({
-    compoundKey: primaryKey(vt.identifier, vt.token),
-  })
+    compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
+  }),
 );
