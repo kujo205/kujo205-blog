@@ -56,6 +56,9 @@ dependencies:
   drizzle-orm:
     specifier: ^0.29.3
     version: 0.29.3(@planetscale/database@1.13.0)(@types/react@18.2.48)(mysql2@3.7.0)(react@18.2.0)
+  embla-carousel-react:
+    specifier: 8.0.0-rc21
+    version: 8.0.0-rc21(react@18.2.0)
   lucide-react:
     specifier: ^0.312.0
     version: 0.312.0(react@18.2.0)
@@ -2258,6 +2261,28 @@ packages:
   /electron-to-chromium@1.4.633:
     resolution: {integrity: sha512-7BvxzXrHFliyQ1oZc6NRMjyEaKOO1Ma1NY98sFZofogWlm+klLWSgrDw7EhatiMgi4R4NV+iWxDdxuIKXtPbOw==}
     dev: true
+
+  /embla-carousel-react@8.0.0-rc21(react@18.2.0):
+    resolution: {integrity: sha512-DOa9hgF/T1fwb8D3rZ8FFMceY3aDXtbluZwzZYMLnN2Dqn0IBLN0l97o3obkMxI9Zzog0u1WMM6HE7AGF9SjEg==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      embla-carousel: 8.0.0-rc21
+      embla-carousel-reactive-utils: 8.0.0-rc21(embla-carousel@8.0.0-rc21)
+      react: 18.2.0
+    dev: false
+
+  /embla-carousel-reactive-utils@8.0.0-rc21(embla-carousel@8.0.0-rc21):
+    resolution: {integrity: sha512-TnV49hoTdwfcKr2vgQHQ3zcCqJSkvLJ5rR/pGzmEx5GeO07CV/e755lkSD7No0C6cz+JFB8dcHV7uS+5Gnc7Lg==}
+    peerDependencies:
+      embla-carousel: 8.0.0-rc21
+    dependencies:
+      embla-carousel: 8.0.0-rc21
+    dev: false
+
+  /embla-carousel@8.0.0-rc21:
+    resolution: {integrity: sha512-rK//vyPIhmD/5QUDtjk9A5RxPoDZ5LOATYMVSFECAzwcAe7yJmqXQbdYzEZf4ASOR+ivod5msqXsKgZXypA35Q==}
+    dev: false
 
   /emoji-regex@8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
