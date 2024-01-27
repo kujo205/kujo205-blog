@@ -23,7 +23,7 @@ const DesktopNav = () => {
 
 export const Header = () => {
   return (
-    <header className="sticky top-0 bg-[rgba(255,255,255,.8)] backdrop-blur">
+    <header className="sticky top-0 z-10 bg-[rgba(255,255,255,.8)] backdrop-blur">
       <section className="sm: flex justify-between px-12 py-4 lg:px-32">
         <Link href={"/"}>
           <div className="flex cursor-pointer items-center gap-3">

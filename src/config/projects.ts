@@ -1,4 +1,4 @@
-const baseUrl = "pages/projects";
+const baseUrl = "/pages/projects";
 
 export type TProject = {
   title: string;
@@ -18,7 +18,7 @@ export const projects = [
       `${baseUrl}/docutiv/2.png`,
       `${baseUrl}/docutiv/3.png`,
     ],
-    liveUrl: "https://docutiv.com/",
+    liveUrl: "https://docutiv.net/",
   },
   {
     title: "FICT Advisor",
