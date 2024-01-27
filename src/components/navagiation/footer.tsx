@@ -2,6 +2,7 @@ import Link from "next/link";
 import { socialMediaLinks } from "@/config/general";
 import { Icons } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 
 const SocialMedia = () => {
   return (
@@ -41,7 +42,14 @@ export const Footer = () => {
     <footer className="flex flex-col bg-black px-12 py-12 font-bold text-white lg:px-32">
       <section className="flex justify-between">
         <div>
-          <p className="text-2xl uppercase ">ivan kuts</p>
+          <div>
+            <span className="text-2xl uppercase ">ivan kuts</span>
+            <Link href={"/login"}>
+              <Button variant="link" className="text-zinc-600">
+                Log in as admin
+              </Button>
+            </Link>
+          </div>
           <p className="text-base font-medium">
             An ambitious fully-stacked web-developer
           </p>

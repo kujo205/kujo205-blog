@@ -1,69 +1,9 @@
-import { unstable_noStore as noStore } from "next/cache";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { getServerAuthSession } from "@/server/auth";
-import { api } from "@/trpc/server";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-
-const tecnologies = [
-  "CSS",
-  "NextJs",
-  "React",
-  "Redux",
-  "JavaScript",
-  "Typescript",
-  "TailwindCSS",
-  "Git",
-  "C",
-  "C++",
-  "Qt",
-  "bash",
-  "SCSS",
-  "HTML",
-  "Express",
-  "Electron",
-  "MUI",
-  "Radix-ui",
-  "Drizzle",
-  "Zustand",
-  "React-query",
-  "React-hook-form",
-  "Formik",
-];
-
-const softSkills = [
-  {
-    name: "Communication",
-    description:
-      "Efficient communication between team-members  is a key part for success of any company",
-  },
-  {
-    name: "Languages spoken",
-    description: "Ukrainian - Native, English - C1, Russian - B2, Spanish - A1",
-  },
-  {
-    name: "Responsibility",
-    description:
-      "I’m very serious regarding deadlines and tasks, complete the goal no matter what",
-  },
-];
-
-const tools = [
-  "docker",
-  "figma",
-  "linux",
-  "planetscale",
-  "vimmotions",
-  "webstorm",
-  "vercel",
-];
-
+import { tecnologies, softSkills, tools } from "@/config/about";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 export default async function Home() {
-  // noStore();
-  //const hello = await api.post.hello.query({ text: "from tRPC" });
-  //const session = await getServerAuthSession();
-
   return (
     <main className="flex min-h-screen flex-col items-center text-base">
       <section className="flex h-[800px] w-full items-center justify-center bg-wave">
