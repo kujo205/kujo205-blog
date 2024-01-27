@@ -37,6 +37,14 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
     });
   }, [api]);
 
+  function handleCircleSelected(index: number) {
+    if (!api) {
+      return;
+    }
+
+    api.scrollTo(index);
+  }
+
   return (
     <Card className="p-[20px]">
       <Carousel setApi={setApi} className="relative overflow-hidden rounded-xl">
@@ -54,12 +62,14 @@ const ProjectCard = ({ project }: ProjectCardProps) => {
           ))}
         </CarouselContent>
 
-        <div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
-          <div></div>
+        <div className="flex h-[20px] items-center justify-center gap-1 bg-sky-950">
+          {project.images.map((image, index) => (
+            <div
+              className={`h-[8px] w-[8px] cursor-pointer rounded ${index === current - 1 ? "bg-white" : "bg-[#667E8F]"}`}
+              key={image}
+              onClick={() => handleCircleSelected(index)}
+            ></div>
+          ))}
         </div>
         <CarouselPrevious className="absolute left-[12px]" />
         <CarouselNext className="absolute right-[12px]" />
