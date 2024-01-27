@@ -1,9 +1,11 @@
 import { unstable_noStore as noStore } from "next/cache";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { tecnologies, softSkills, tools } from "@/config/about";
+
 export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center text-base">
