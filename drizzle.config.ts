@@ -9,4 +9,5 @@ export default {
     uri: env.DATABASE_URL,
   },
   tablesFilter: ["kujo205-blog_*"],
+  out: "./src/server/db",
 } satisfies Config;

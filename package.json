@@ -7,6 +7,7 @@
     "build": "next build",
     "db:push": "drizzle-kit push:mysql",
     "db:studio": "drizzle-kit studio",
+    "db:generate-migration": "drizzle-kit generate:mysql",
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start"
@@ -29,6 +30,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.0",
+    "dotenv": "^16.4.1",
     "drizzle-orm": "^0.29.3",
     "embla-carousel-react": "8.0.0-rc21",
     "lucide-react": "^0.312.0",
@@ -60,6 +62,7 @@
     "prettier": "^3.1.0",
     "prettier-plugin-tailwindcss": "^0.5.7",
     "tailwindcss": "^3.3.5",
+    "ts-node": "^10.9.2",
     "typescript": "^5.1.6"
   },
   "ct3aMetadata": {

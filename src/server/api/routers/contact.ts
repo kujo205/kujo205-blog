@@ -9,6 +9,6 @@ export const contactRouter = createTRPCRouter({
     .mutation(async ({ input, ctx }) => {
       console.log(input);
       const result = await ctx.db.insert(messages).values(input);
-      //TODO: add redirection to telgram bot
+      //TODO: add redirection to telegram bot
     }),
 });

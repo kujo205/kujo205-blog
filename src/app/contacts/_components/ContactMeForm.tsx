@@ -29,6 +29,7 @@ const ContactMeForm = () => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<TContactSchema>({
     resolver: zodResolver(contactSchema),
   });
@@ -36,6 +37,7 @@ const ContactMeForm = () => {
   const { mutate: submitMessage } = api.contact.submitMessage.useMutation();
   const onSubmit: SubmitHandler<TContactSchema> = (data) => {
     submitMessage(data);
+    reset({ message: "" });
   };
 
   return (
