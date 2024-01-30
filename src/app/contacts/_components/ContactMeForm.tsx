@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { contactSchema, type TContactSchema } from "@/schemas/contact";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { api } from "@/trpc/react";
+
 interface LabelWrapperProps {
   label: string;
   children: ReactNode;
@@ -30,7 +32,11 @@ const ContactMeForm = () => {
   } = useForm<TContactSchema>({
     resolver: zodResolver(contactSchema),
   });
-  const onSubmit: SubmitHandler<TContactSchema> = (data) => {};
+
+  const { mutate: submitMessage } = api.contact.submitMessage.useMutation();
+  const onSubmit: SubmitHandler<TContactSchema> = (data) => {
+    submitMessage(data);
+  };
 
   return (
     <form
