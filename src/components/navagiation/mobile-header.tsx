@@ -24,7 +24,7 @@ export const OpenMobileHeaderButtonAndMobileHeader = () => {
         <Icons.Menu />
       </SheetTrigger>
       <SheetContent>
-        <nav className="flex flex-col">
+        <nav className="flex flex-col gap-1">
           {header.map((navItem) => (
             <SheetClose asChild key={navItem.url}>
               <Link href={navItem.url}>
