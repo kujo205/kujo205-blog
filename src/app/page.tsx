@@ -1,10 +1,8 @@
-import { unstable_noStore as noStore } from "next/cache";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { tecnologies, softSkills, tools } from "@/config/about";
+import { Badge } from "@/components/ui/badge";
+import Link from "next/link";
 
 export default async function Home() {
   return (
