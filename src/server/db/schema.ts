@@ -130,3 +130,10 @@ export const verificationTokens = mysqlTable(
     compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
   }),
 );
+
+export const messages = mysqlTable("message", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  email: varchar("email", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  message: text("message").notNull(),
+});
