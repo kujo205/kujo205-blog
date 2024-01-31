@@ -42,11 +42,11 @@ const ContactMeForm = () => {
 
   return (
     <form
-      className="flex flex-col gap-4 rounded-xl bg-gradient-to-r from-[#9747FF] to-[#D74EB9] px-[40px] py-[32px] md:w-[800px]"
+      className="m-auto flex w-[100%] flex-col gap-4 rounded-xl bg-gradient-to-r from-[#9747FF] to-[#D74EB9] px-[40px] py-[32px] md:w-[800px]"
       onSubmit={handleSubmit(onSubmit)}
     >
       <h1 className="text-2xl font-bold text-white ">Or text directly</h1>
-      <div className="flex gap-6">
+      <div className="flex flex-wrap gap-6">
         <LabelWrapper label={"Email"} className="min-w-[200px] flex-[0.5]">
           <Input
             type="text"

@@ -6,7 +6,7 @@ import { ContactMeForm } from "@/app/contacts/_components/ContactMeForm";
 
 export default function Page() {
   return (
-    <section className="m-auto flex flex-col gap-6 py-[90px]">
+    <section className="flex flex-col gap-6 px-3 py-[90px] md:m-auto">
       <div>
         <h2 className="mb-2 text-2xl font-bold">
           You can find me on these platforms:
