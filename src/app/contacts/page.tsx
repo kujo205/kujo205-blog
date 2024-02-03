@@ -3,8 +3,11 @@ import Link from "next/link";
 import { socialMediaLinks } from "@/config/general";
 import { Icons } from "@/components/icons";
 import { ContactMeForm } from "@/app/contacts/_components/ContactMeForm";
+import { getServerAuthSession } from "@/server/auth";
 
-export default function Page() {
+export default async function Page() {
+  const session = await getServerAuthSession();
+
   return (
     <section className="flex flex-col gap-6 px-3 py-[90px] md:m-auto">
       <div>
@@ -57,7 +60,7 @@ export default function Page() {
           </Link>
         </div>
       </div>
-      <ContactMeForm />
+      <ContactMeForm user={session?.user} />
     </section>
   );
 }
