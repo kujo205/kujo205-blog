@@ -8,12 +8,15 @@ import {
 } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
-import { header } from "@/config/general";
+import { getHeaderItems } from "@/config/general";
 import Link from "next/link";
-// import { useSession } from "next-auth/react";
+import { type UserRole } from "@/server/db/schema";
 
-export const OpenMobileHeaderButtonAndMobileHeader = () => {
-  // const { data: session } = useSession();
+export const OpenMobileHeaderButtonAndMobileHeader = ({
+  role,
+}: {
+  role?: UserRole | null;
+}) => {
   const pathname = usePathname();
   return (
     <Sheet>
@@ -27,7 +30,7 @@ export const OpenMobileHeaderButtonAndMobileHeader = () => {
       </SheetTrigger>
       <SheetContent>
         <nav className="flex flex-col gap-1">
-          {header.map((navItem) => (
+          {getHeaderItems(role).map((navItem) => (
             <SheetClose asChild key={navItem.url}>
               <Link href={navItem.url}>
                 <Button
