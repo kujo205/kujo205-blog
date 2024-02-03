@@ -1,3 +1,4 @@
+"use client";
 import { header, socialMediaLinks } from "@/config/general";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import Image from "next/image";
 import { Icons } from "@/components/icons";
 import { NavProgressBar } from "@/components/ui/progress";
 import { OpenMobileHeaderButtonAndMobileHeader } from "@/components/navagiation/mobile-header";
+import { type Session } from "next-auth";
 
 const DesktopNav = () => {
   return (
@@ -21,7 +23,7 @@ const DesktopNav = () => {
   );
 };
 
-export const Header = () => {
+export const Header = ({ session }: { session: Session | null }) => {
   return (
     <header className="sticky top-0 z-10 bg-[rgba(255,255,255,.8)] backdrop-blur">
       <section className="sm: flex justify-between px-12 py-4 lg:px-32">

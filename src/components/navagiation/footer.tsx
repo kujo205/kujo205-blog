@@ -1,8 +1,10 @@
+"use client";
 import Link from "next/link";
 import { socialMediaLinks } from "@/config/general";
 import { Icons } from "@/components/icons";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { signIn, signOut } from "next-auth/react";
 
 const SocialMedia = () => {
   return (
@@ -44,11 +46,20 @@ export const Footer = () => {
         <div>
           <div>
             <span className="text-2xl uppercase ">ivan kuts</span>
-            <Link href={"/login"}>
-              <Button variant="link" className="text-zinc-600">
-                Log in as admin
-              </Button>
-            </Link>
+            <Button
+              variant="link"
+              className="text-zinc-600"
+              onClick={() => signIn("google")}
+            >
+              Log in as admin
+            </Button>
+            <Button
+              variant="link"
+              className="text-zinc-600"
+              onClick={() => signOut()}
+            >
+              Log out
+            </Button>
           </div>
           <p className="text-base font-medium">
             An ambitious fully-stacked web-developer

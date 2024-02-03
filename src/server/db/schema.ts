@@ -137,3 +137,5 @@ export const messages = mysqlTable("message", {
   name: varchar("name", { length: 255 }).notNull(),
   message: text("message").notNull(),
 });
+
+export type UserRole = typeof users.$inferSelect.role;

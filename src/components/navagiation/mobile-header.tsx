@@ -10,8 +10,10 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 import { header } from "@/config/general";
 import Link from "next/link";
+// import { useSession } from "next-auth/react";
 
 export const OpenMobileHeaderButtonAndMobileHeader = () => {
+  // const { data: session } = useSession();
   const pathname = usePathname();
   return (
     <Sheet>

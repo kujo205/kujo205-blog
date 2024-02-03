@@ -1,9 +1,8 @@
 import "@/styles/globals.css";
 import { Header } from "@/components/navagiation/header";
-
 import { Footer } from "@/components/navagiation/footer";
 import { Inter } from "next/font/google";
-
+import { getServerAuthSession } from "@/server/auth";
 import { TRPCReactProvider } from "@/trpc/react";
 
 const inter = Inter({
@@ -17,18 +16,21 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerAuthSession();
+
+  console.log("session", session);
   return (
     <html lang="en">
       <body
         className={`font-sans ${inter.variable} flex min-h-screen flex-col`}
       >
         <TRPCReactProvider>
-          <Header />
+          <Header session={session} />
           {children}
           <Footer />
         </TRPCReactProvider>
