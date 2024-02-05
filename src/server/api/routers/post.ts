@@ -8,6 +8,21 @@ import {
 
 // TODO: explore this code
 export const postRouter = createTRPCRouter({
+  getPosts: publicProcedure
+    .input(
+      z.object({
+        page: z.number(),
+        pageSize: z.number(),
+        tagIds: z.array(z.number()),
+      }),
+    )
+    .query(({ input, ctx }) => {
+      return {
+        ...input,
+        posts: [],
+        left: 0,
+      };
+    }),
   hello: publicProcedure
     .input(z.object({ text: z.string() }))
     .query(({ input }) => {
