@@ -13,55 +13,6 @@ import { type AdapterAccount } from "next-auth/adapters";
 
 export const mysqlTable = mysqlTableCreator((name) => `kujo205-blog_${name}`);
 
-export const postTags = mysqlTable("postTag", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  name: varchar("name", { length: 255 }),
-});
-
-export const blogPoTagsRelations = relations(postTags, ({ many }) => ({
-  blogPost: many(blogPosts),
-}));
-
-export const blogPosts = mysqlTable("blogPost", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  title: varchar("title", { length: 256 }),
-  content: text("content"),
-  createdAt: timestamp("created_at")
-    .default(sql`CURRENT_TIMESTAMP`)
-    .notNull(),
-  updatedAt: timestamp("updatedAt").onUpdateNow(),
-  likes: int("likes").default(0),
-  watched: int("watched").default(0),
-});
-
-export const blogPostsRelations = relations(blogPosts, ({ one, many }) => ({
-  user: one(users),
-  comments: many(comments),
-  tags: many(postTags),
-}));
-
-export const blogPostsTags = mysqlTable("blogPostTag", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  blogPostId: bigint("blogPostId", { mode: "number" }).notNull(),
-  tagId: bigint("tagId", { mode: "number" }).notNull(),
-});
-
-export const blogPostsTagsRelations = relations(blogPostsTags, ({ one }) => ({
-  blogPost: one(blogPosts),
-  tag: one(blogPostsTags),
-}));
-
-export const comments = mysqlTable("comment", {
-  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
-  replyTo: bigint("replyTo", { mode: "number" }),
-  content: varchar("content", { length: 5000 }),
-});
-
-export const commentsRelations = relations(comments, ({ one, many }) => ({
-  user: one(users),
-  replyTo: one(comments),
-}));
-
 export const users = mysqlTable("user", {
   id: varchar("id", { length: 255 }).notNull().primaryKey(),
   name: varchar("name", { length: 255 }),
@@ -79,6 +30,58 @@ export const usersRelations = relations(users, ({ many }) => ({
   comments: many(comments),
   sessions: many(sessions),
   verificationTokens: many(verificationTokens),
+}));
+
+export const blogPosts = mysqlTable("blogPost", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  title: varchar("title", { length: 256 }),
+  content: text("content"),
+  createdAt: timestamp("created_at")
+    .default(sql`CURRENT_TIMESTAMP`)
+    .notNull(),
+  updatedAt: timestamp("updatedAt").onUpdateNow(),
+  likes: int("likes").default(0),
+  watched: int("watched").default(0),
+});
+
+export const blogPostsRelations = relations(blogPosts, ({ one, many }) => ({
+  user: many(users),
+  comments: many(comments),
+  tags: many(blogPostTags),
+}));
+
+export const blogPostTags = mysqlTable("postTag", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  name: varchar("name", { length: 255 }),
+});
+
+export const blogPoTagsRelations = relations(blogPostTags, ({ many }) => ({
+  blogPost: many(blogPosts),
+}));
+
+export const tagsToBlogPosts = mysqlTable("tagsToBlogPosts", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  blogPostId: bigint("blogPostId", { mode: "number" }).notNull(),
+  tagId: bigint("tagId", { mode: "number" }).notNull(),
+});
+
+export const tagsToBlogPostsRelations = relations(
+  tagsToBlogPosts,
+  ({ one }) => ({
+    blogPost: one(blogPosts),
+    tag: one(blogPostTags),
+  }),
+);
+
+export const comments = mysqlTable("comment", {
+  id: bigint("id", { mode: "number" }).primaryKey().autoincrement(),
+  replyTo: bigint("replyTo", { mode: "number" }),
+  content: varchar("content", { length: 5000 }),
+});
+
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  user: one(users),
+  replyTo: one(comments),
 }));
 
 export const accounts = mysqlTable(
