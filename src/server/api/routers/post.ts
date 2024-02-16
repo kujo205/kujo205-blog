@@ -1,10 +1,12 @@
 import { z } from "zod";
-
+import { env } from "@/env";
 import {
   createTRPCRouter,
   protectedProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { PutObjectCommand, UploadPartCommand } from "@aws-sdk/client-s3";
 
 // TODO: explore this code
 export const postRouter = createTRPCRouter({
@@ -29,6 +31,19 @@ export const postRouter = createTRPCRouter({
       return {
         greeting: `Hello ${input.text}`,
       };
+    }),
+  getStandardUploadPreassignedUrl: publicProcedure
+    .input(z.object({ key: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { key } = input;
+      const { s3 } = ctx;
+
+      const putObjectCommand = new PutObjectCommand({
+        Bucket: env.BUCKET_NAME,
+        Key: key,
+      });
+
+      return await getSignedUrl(s3, putObjectCommand);
     }),
 
   // create: protectedProcedure
