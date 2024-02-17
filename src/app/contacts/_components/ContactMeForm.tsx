@@ -1,29 +1,12 @@
 "use client";
-import { Input } from "@/components/ui/input";
+import { Input, LabelWrapper } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { contactSchema, type TContactSchema } from "@/schemas/contact";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@/trpc/react";
 import { type User } from "next-auth";
-
-interface LabelWrapperProps {
-  label: string;
-  children: ReactNode;
-  className?: string;
-}
-
-function LabelWrapper({ label, children, className }: LabelWrapperProps) {
-  return (
-    <div className={cn("flex flex-col", className)}>
-      <label className="font-semibold text-gray-700">{label}</label>
-      {children}
-    </div>
-  );
-}
 
 const ContactMeForm = ({ user }: { user?: User }) => {
   const {

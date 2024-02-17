@@ -1,21 +1,15 @@
 "use client";
 import { type TextareaProps } from "@/components/ui/textarea";
-import { useState, useRef, type Dispatch, type SetStateAction } from "react";
+import { useState, useRef } from "react";
 import { api } from "@/trpc/react";
 import axios from "axios";
 
 interface MdEditorProps extends Omit<TextareaProps, "onChange"> {
-  onChange: NonNullable<TextareaProps["onChange"]>;
+  onChange: (value: string) => void;
   value: string;
-  setEditorValue: Dispatch<SetStateAction<string>>;
 }
 
-function MdEditor({
-  onChange,
-  value,
-  setEditorValue,
-  ...other
-}: MdEditorProps) {
+function MdEditor({ onChange, value, ...other }: MdEditorProps) {
   const [lineCount, setLineCount] = useState(getLineCount(value));
   const textarea = useRef<HTMLTextAreaElement>(null);
   const { mutateAsync: getUrl } =
@@ -23,28 +17,22 @@ function MdEditor({
 
   const handleAddImage: TextareaProps["onPaste"] = async (event) => {
     const file = event.clipboardData.files[0];
-    if (!file) return;
+    if (!file || !textarea.current) return;
 
     const imageName = `${file.name}-${Date.now()}`;
-    setEditorValue((prev) => prev + ` [${imageName}](Loading...) `);
-
+    onChange(value + ` [${imageName}](Loading...) `);
     const { presignedUrl, accessUrl } = await getUrl({
       imageName: imageName,
     });
 
-    try {
-      const response = await axios.put(presignedUrl, file.slice(), {
-        headers: {
-          "Content-Type": file.type,
-        },
-      });
-      console.log("response", response);
-    } catch (err) {
-      console.error(err);
-    }
+    const response = await axios.put(presignedUrl, file.slice(), {
+      headers: {
+        "Content-Type": file.type,
+      },
+    });
 
-    setEditorValue((prev) =>
-      prev.replace(
+    onChange(
+      textarea.current.value.replace(
         ` [${imageName}](Loading...) `,
         ` [${imageName}](${accessUrl}) `,
       ),
@@ -52,7 +40,7 @@ function MdEditor({
   };
 
   return (
-    <div className="inline-flex h-[500px] w-full gap-[10px] overflow-auto rounded border-[1px] border-solid border-gray-300 font-mono text-lg">
+    <div className="inline-flex h-[500px] w-full gap-[10px] overflow-auto rounded border-[1px] border-solid border-gray-300 bg-white font-mono text-lg">
       <LineCount lineNumber={lineCount} />
       <textarea
         onPaste={handleAddImage}
@@ -60,9 +48,8 @@ function MdEditor({
         className="h-[9999px] w-full resize-none overflow-y-hidden border-0 p-0 py-[8px] text-lg outline-0"
         {...other}
         onChange={(event) => {
-          setEditorValue(event.target.value);
+          onChange(event.target.value);
           setLineCount(getLineCount(event.target.value));
-          onChange(event);
         }}
         onKeyDown={(event) => {
           if (event.key === "Tab" && textarea.current) {

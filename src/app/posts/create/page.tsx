@@ -1,19 +1,9 @@
 "use client";
 import { useState } from "react";
-import { MdEditor } from "@/components/mdEditor";
+import { BlogPostForm } from "@/app/posts/_components/blogpost-form";
 
 export default function Page() {
-  const [editorValue, setEditorValue] = useState("adsadasdasdas");
+  const [editorValue, setEditorValue] = useState("");
 
-  return (
-    <div>
-      <MdEditor
-        setEditorValue={setEditorValue}
-        value={editorValue}
-        onChange={(event) => {
-          console.log(event.target.value);
-        }}
-      ></MdEditor>
-    </div>
-  );
+  return <BlogPostForm></BlogPostForm>;
 }
