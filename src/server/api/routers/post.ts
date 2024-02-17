@@ -32,18 +32,23 @@ export const postRouter = createTRPCRouter({
         greeting: `Hello ${input.text}`,
       };
     }),
-  getStandardUploadPreassignedUrl: publicProcedure
-    .input(z.object({ key: z.string() }))
+  getStandardUploadPreassignedUrl: protectedProcedure
+    .input(z.object({ imageName: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const { key } = input;
+      const { imageName } = input;
       const { s3 } = ctx;
 
       const putObjectCommand = new PutObjectCommand({
         Bucket: env.BUCKET_NAME,
-        Key: key,
+        Key: imageName,
       });
+      const presignedUrl = await getSignedUrl(s3, putObjectCommand);
+      const accessUrl = `https://${env.BUCKET_NAME}.s3.${env.AWS_REGION}.amazonaws.com/${imageName}`;
 
-      return await getSignedUrl(s3, putObjectCommand);
+      return {
+        presignedUrl,
+        accessUrl,
+      };
     }),
 
   // create: protectedProcedure
