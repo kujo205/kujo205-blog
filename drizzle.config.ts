@@ -6,7 +6,11 @@ export default {
   schema: "./src/server/db/schema.ts",
   driver: "mysql2",
   dbCredentials: {
-    uri: env.DATABASE_URL,
+    user: env.DATABASE_USER,
+    host: env.DATABASE_HOST,
+    port: +env.DATABASE_PORT,
+    password: env.DATABASE_PASSWORD,
+    database: env.DATABASE_NAME,
   },
   tablesFilter: ["kujo205-blog_*"],
   out: "./src/server/db",

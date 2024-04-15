@@ -16,6 +16,8 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
+//TODO: move to local postgress db and host on AWS
+
 export default async function RootLayout({
   children,
 }: {

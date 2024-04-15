@@ -35,9 +35,14 @@ function InputCombobox({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button variant="outlinpetag">Select a tag</Button>
-      </PopoverTrigger>
+      <div>
+        <PopoverTrigger asChild>
+          <Button variant="outline">Select a tag</Button>
+        </PopoverTrigger>
+        {items.map((item) => (
+          <Button key={item.value}>{item.label}</Button>
+        ))}
+      </div>
       <PopoverContent className="w-[200px] p-0">
         <Command>
           <CommandInput></CommandInput>

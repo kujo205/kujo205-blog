@@ -17,6 +17,7 @@ const config = {
     "@typescript-eslint/consistent-type-definitions": "off",
     "@typescript-eslint/no-unsafe-assignment": "warn",
     "@typescript-eslint/no-unsafe-call": "warn",
+    "@typescript-eslint/no-floating-promises": "warn",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {
