@@ -14,6 +14,7 @@ import { ZodError } from "zod";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 import { s3 } from "@/server/api/s3";
+import * as console from "node:console";
 
 /**
  * 1. CONTEXT
@@ -94,6 +95,35 @@ export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
   if (!ctx.session || !ctx.session.user) {
     throw new TRPCError({ code: "UNAUTHORIZED" });
   }
+
+  return next({
+    ctx: {
+      // infers the `session` as non-nullable
+      session: { ...ctx.session, user: ctx.session.user },
+    },
+  });
+});
+
+/**
+ * Protected (authenticated) procedure
+ *
+ * If you want a query or mutation to ONLY be accessible to logged in users, use this. It verifies
+ * the session is valid and guarantees `ctx.session.user` is not null.
+ *
+ * @see https://trpc.io/docs/procedures
+ */
+export const adminProcedure = t.procedure.use(({ ctx, next }) => {
+  if (!ctx.session || !ctx.session.user) {
+    throw new TRPCError({ code: "UNAUTHORIZED" });
+  }
+
+  if (ctx.session.user.role !== "ADMIN") {
+    throw new TRPCError({
+      code: "FORBIDDEN",
+      message: `Invalid users' role: ${ctx.session.user.role} to perform this action`,
+    });
+  }
+
   return next({
     ctx: {
       // infers the `session` as non-nullable

@@ -3,12 +3,15 @@ import { env } from "@/env";
 import {
   createTRPCRouter,
   protectedProcedure,
+  adminProcedure,
   publicProcedure,
 } from "@/server/api/trpc";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-import { PutObjectCommand, UploadPartCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3";
+import { blogPostTags } from "@/server/db/schema";
+import { TRPCError } from "@trpc/server";
 
-// TODO: explore this code
+//TODO: add services here
 export const postRouter = createTRPCRouter({
   getPosts: publicProcedure
     .input(
@@ -50,6 +53,30 @@ export const postRouter = createTRPCRouter({
         accessUrl,
       };
     }),
+  addTag: adminProcedure
+    .input(z.object({ tag: z.string() }))
+    .mutation(async ({ ctx, input: { tag } }) => {
+      if (tag.trim().length < 1)
+        throw new TRPCError({
+          code: "UNPROCESSABLE_CONTENT",
+          message: "Tag cannot be an empty string",
+        });
+
+      const { db } = ctx;
+
+      await db.insert(blogPostTags).values({
+        name: tag,
+      });
+    }),
+
+  getAllTags: publicProcedure.query(async ({ ctx }) => {
+    const { db } = ctx;
+    const data = await db.select().from(blogPostTags);
+
+    return data.map(({ name, id }) => {
+      return { label: name, value: id };
+    });
+  }),
 
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))

@@ -5,5 +5,9 @@ import { BlogPostForm } from "@/app/posts/_components/blogpost-form";
 export default function Page() {
   const [editorValue, setEditorValue] = useState("");
 
-  return <BlogPostForm></BlogPostForm>;
+  return (
+    <main className="flex flex-col">
+      <BlogPostForm />
+    </main>
+  );
 }

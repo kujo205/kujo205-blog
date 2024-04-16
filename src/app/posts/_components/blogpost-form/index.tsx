@@ -4,7 +4,8 @@ import { Controller, useForm } from "react-hook-form";
 import { Input, LabelWrapper } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { MdEditor } from "@/components/mdEditor";
-import { InputCombobox } from "@/components/ui/comboboxes/input-box";
+import { InputCombobox } from "./InputCombobox";
+import { api } from "@/trpc/react";
 
 const initialValues: TPostSchema = {
   content: "",
@@ -16,6 +17,10 @@ interface BlogpostFormProps {
 }
 const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
   defaultValues = defaultValues ?? initialValues;
+
+  const { data: tagsOptions, refetch: refetchTags } =
+    api.post.getAllTags.useQuery();
+  const { mutate: addNewTag } = api.post.addTag.useMutation();
 
   const {
     register,
@@ -30,8 +35,19 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
     defaultValues,
   });
 
+  async function handleAddTag(tag: string) {
+    addNewTag(
+      { tag },
+      {
+        onSuccess: () => {
+          refetchTags();
+        },
+      },
+    );
+  }
+
   return (
-    <div className="flex flex-col gap-4 bg-slate-50 p-4">
+    <div className="flex max-w-[1440px] flex-col gap-4 p-4">
       <LabelWrapper label="Post title" className="text-lg text-violet-600">
         <Input {...register("title")} className="text-lg"></Input>
       </LabelWrapper>
@@ -42,30 +58,26 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
           return (
             <MdEditor
               value={value}
-              onChange={(value) => setValue("content", value)}
+              onChange={(value) => {
+                setValue("content", value);
+              }}
             ></MdEditor>
           );
         }}
-      ></Controller>
+      />
       <div>
-        <h3 className="text-[20px] font-semibold">Add tags</h3>
         <Controller
           control={control}
           name={"tags"}
           render={({ field: { value } }) => {
             return (
               <InputCombobox
+                handleAddTag={handleAddTag}
                 onSelectedItemsChange={(value) => {
                   setValue("tags", value);
                 }}
-                selectedItems={value}
-                items={[
-                  { label: "Item1", value: "value1" },
-                  { label: "Item2", value: "value2" },
-                  { label: "Item3", value: "value3" },
-                  { label: "Item4", value: "value4" },
-                  { label: "Item5", value: "value5" },
-                ]}
+                selectedItemValues={value}
+                items={tagsOptions ?? []}
               />
             );
           }}

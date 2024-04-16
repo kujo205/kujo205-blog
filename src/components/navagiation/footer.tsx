@@ -49,7 +49,10 @@ export const Footer = () => {
             <Button
               variant="link"
               className="text-zinc-600"
-              onClick={() => signIn("google")}
+              onClick={() => {
+                console.log("wtf man");
+                signIn("google");
+              }}
             >
               Log in as admin
             </Button>
