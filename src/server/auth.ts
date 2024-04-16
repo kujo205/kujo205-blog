@@ -45,6 +45,8 @@ export const authOptions: NextAuthOptions = {
       };
     },
   },
+
+  // @ts-expect-error: typings mismatch
   adapter: drizzleAdapter(db),
   providers: [
     GoogleProvider({

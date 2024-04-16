@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { type MySqlDatabase } from "drizzle-orm/mysql-core";
+import { type MySqlDatabase } from "drizzle-orm/mysql2";
 import * as schema from "@/server/db/schema";
 
 import type { Adapter, AdapterUser, AdapterSession } from "next-auth/adapters";
