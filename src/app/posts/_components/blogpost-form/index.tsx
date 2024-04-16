@@ -6,10 +6,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { MdEditor } from "@/components/mdEditor";
 import { InputCombobox } from "./InputCombobox";
 import { api } from "@/trpc/react";
-
+import type { TItem } from "./InputCombobox";
 const initialValues: TPostSchema = {
   content: "",
-  tags: ["value1", "value2"],
+  tags: [999999, 999998],
   title: "Blog post №1",
 };
 interface BlogpostFormProps {
@@ -35,12 +35,14 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
     defaultValues,
   });
 
-  async function handleAddTag(tag: string) {
+  async function handleAddTag(tag: string, cb?: (arg0: TItem[]) => void) {
     addNewTag(
       { tag },
       {
         onSuccess: () => {
-          refetchTags();
+          refetchTags().then(({ data }) => {
+            cb?.(data as TItem[]);
+          });
         },
       },
     );
@@ -77,6 +79,7 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
                   setValue("tags", value);
                 }}
                 selectedItemValues={value}
+                // @ts-expect-error: typings from drizzle
                 items={tagsOptions ?? []}
               />
             );

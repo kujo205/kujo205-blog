@@ -20,13 +20,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
 
-type TItem = { label: string; value: string };
+export type TItem = { label: string; value: number };
 
 interface InputComboboxProps {
   items: TItem[];
-  selectedItemValues: string[];
-  onSelectedItemsChange: (value: string[]) => void;
-  handleAddTag: (value: string) => void;
+  selectedItemValues: number[];
+  onSelectedItemsChange: (value: number[]) => void;
+  handleAddTag: (value: string, cb?: (items: TItem[]) => void) => void;
 }
 
 function InputCombobox({
@@ -42,16 +42,26 @@ function InputCombobox({
     selectedItemValues.includes(item.value),
   );
 
-  function handleRemoveItem(value: string) {
+  function handleRemoveItem(value: number) {
     onSelectedItemsChange(selectedItemValues.filter((v) => v !== value));
   }
 
-  function handleValueChange(value: string) {
+  function handleInputValueChange(value: string) {
     const selectedLabels = items.map((item) => item.label);
     const isLabelPresentInTheList = selectedLabels.some((v) =>
       v.includes(value),
     );
     setShowAddBtn(!isLabelPresentInTheList);
+  }
+
+  function onItemSelect(_value: number) {
+    const isItemPresent = selectedItemValues.some((value) => value === _value);
+    if (!isItemPresent) onSelectedItemsChange([...selectedItemValues, _value]);
+    else {
+      onSelectedItemsChange(
+        selectedItemValues.filter((value) => value !== _value),
+      );
+    }
   }
 
   return (
@@ -80,7 +90,7 @@ function InputCombobox({
         <Command>
           <CommandInput
             ref={inputRef}
-            onValueChange={handleValueChange}
+            onValueChange={handleInputValueChange}
             additionalChildren={
               showAddBtn && (
                 <Button
@@ -88,7 +98,14 @@ function InputCombobox({
                   className="p-[.25rem]"
                   onClick={() => {
                     if (!inputRef?.current) return;
-                    handleAddTag(inputRef.current.value);
+                    setOpen(false);
+                    handleAddTag(inputRef.current.value, (items) => {
+                      const newItem = items.find((item) => {
+                        if (!inputRef?.current) return;
+                        return item.label === inputRef?.current.value;
+                      });
+                      if (newItem?.value) onItemSelect(newItem.value);
+                    });
                   }}
                 >
                   <Icons.PlusIcon />
@@ -101,21 +118,8 @@ function InputCombobox({
             {items.map((item) => (
               <CommandItem
                 key={item.value}
-                value={item.value}
-                onSelect={(_) => {
-                  const isItemPresent = selectedItemValues.some(
-                    (value) => value === item.value,
-                  );
-                  if (!isItemPresent)
-                    onSelectedItemsChange([...selectedItemValues, item.value]);
-                  else
-                    onSelectedItemsChange(
-                      selectedItemValues.filter(
-                        (value) => value !== item.value,
-                      ),
-                    );
-                  setOpen(false);
-                }}
+                value={item.value.toString()}
+                onSelect={() => onItemSelect(item.value)}
               >
                 <Check
                   className={cn(
