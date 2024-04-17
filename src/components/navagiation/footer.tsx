@@ -50,7 +50,6 @@ export const Footer = () => {
               variant="link"
               className="text-zinc-600"
               onClick={() => {
-                console.log("wtf man");
                 signIn("google");
               }}
             >

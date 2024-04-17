@@ -8,6 +8,7 @@ import {
   timestamp,
   varchar,
   mysqlEnum,
+  json,
 } from "drizzle-orm/mysql-core";
 import { type AdapterAccount } from "next-auth/adapters";
 
@@ -116,6 +117,7 @@ export const sessions = mysqlTable("session", {
   sessionToken: varchar("sessionToken", { length: 255 }).notNull().primaryKey(),
   userId: varchar("userId", { length: 255 }).notNull(),
   expires: timestamp("expires", { mode: "date" }).notNull(),
+  postFormValues: json("postFormValues"),
 });
 
 export const sessionsRelations = relations(sessions, ({ one }) => ({

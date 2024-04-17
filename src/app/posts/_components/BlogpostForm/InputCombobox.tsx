@@ -69,7 +69,7 @@ function InputCombobox({
       <div className="flex flex-col items-start gap-[16px]">
         <h3 className="text-[20px] font-semibold">Add tags</h3>
         <div
-          className={`flex gap-[8px] ${selectedItems.length === 0 && "hidden"}`}
+          className={`flex flex-wrap gap-[8px] ${selectedItems.length === 0 && "hidden"}`}
         >
           {selectedItems.map(({ label, value }) => (
             <DeletableButton

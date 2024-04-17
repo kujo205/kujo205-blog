@@ -14,7 +14,6 @@ import { ZodError } from "zod";
 import { getServerAuthSession } from "@/server/auth";
 import { db } from "@/server/db";
 import { s3 } from "@/server/api/s3";
-import * as console from "node:console";
 
 /**
  * 1. CONTEXT

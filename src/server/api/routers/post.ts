@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { env } from "@/env";
+import { postSchema } from "@/schemas/post";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -8,8 +9,9 @@ import {
 } from "@/server/api/trpc";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { blogPostTags } from "@/server/db/schema";
+import { blogPostTags, sessions } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
+import { eq } from "drizzle-orm";
 
 //TODO: add services here
 export const postRouter = createTRPCRouter({
@@ -68,6 +70,32 @@ export const postRouter = createTRPCRouter({
         name: tag,
       });
     }),
+
+  savePostValuesToSession: adminProcedure
+    .input(z.object({ postFormValues: postSchema }))
+    .mutation(async ({ ctx, input: { postFormValues } }) => {
+      const { db, session } = ctx;
+
+      try {
+        const resp = await db
+          .update(sessions)
+          .set({
+            postFormValues,
+          })
+          .where(eq(sessions.sessionToken, session.token));
+      } catch (err) {
+        console.log(err);
+      }
+    }),
+
+  getPostValuesFromSession: adminProcedure.query(async ({ ctx }) => {
+    const { db, session } = ctx;
+
+    return db
+      .select({ postFormValues: sessions.postFormValues })
+      .from(sessions)
+      .where(eq(sessions.sessionToken, session.token));
+  }),
 
   getAllTags: publicProcedure.query(async ({ ctx }) => {
     const { db } = ctx;

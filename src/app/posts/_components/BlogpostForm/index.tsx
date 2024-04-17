@@ -7,6 +7,12 @@ import { MdEditor } from "@/components/mdEditor";
 import { InputCombobox } from "./InputCombobox";
 import { api } from "@/trpc/react";
 import type { TItem } from "./InputCombobox";
+import { Button } from "@/components/ui/button";
+import { useDebouncedCallback } from "use-debounce";
+import { useSession } from "next-auth/react";
+import { type Session } from "next-auth";
+import { useEffect } from "react";
+
 const initialValues: TPostSchema = {
   content: "",
   tags: [999999, 999998],
@@ -14,6 +20,8 @@ const initialValues: TPostSchema = {
 };
 interface BlogpostFormProps {
   defaultValues?: TPostSchema;
+  //TODO: replace with api endpoint
+  setEditorValue?: (arg0: string) => void;
 }
 const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
   defaultValues = defaultValues ?? initialValues;
@@ -21,6 +29,15 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
   const { data: tagsOptions, refetch: refetchTags } =
     api.post.getAllTags.useQuery();
   const { mutate: addNewTag } = api.post.addTag.useMutation();
+  const { mutate: savePostValuesToSession } =
+    api.post.savePostValuesToSession.useMutation();
+
+  const handlePostFormUpdate = useDebouncedCallback(
+    async (postForm: TPostSchema) => {
+      savePostValuesToSession({ postFormValues: postForm });
+    },
+    400,
+  );
 
   const {
     register,
@@ -30,10 +47,18 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
     setValue,
     watch,
     control,
+    getValues,
   } = useForm<TPostSchema>({
     resolver: zodResolver(postSchema),
     defaultValues,
   });
+
+  const titleField = watch("title");
+  const tagsField = watch("tags");
+
+  useEffect(() => {
+    handlePostFormUpdate(getValues());
+  }, [titleField, tagsField]);
 
   async function handleAddTag(tag: string, cb?: (arg0: TItem[]) => void) {
     addNewTag(
@@ -49,9 +74,9 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
   }
 
   return (
-    <div className="flex max-w-[1440px] flex-col gap-4 p-4">
+    <form className="flex flex-col gap-4">
       <LabelWrapper label="Post title" className="text-lg text-violet-600">
-        <Input {...register("title")} className="text-lg"></Input>
+        <Input {...register("title")} className="text-lg" />
       </LabelWrapper>
       <Controller
         control={control}
@@ -61,13 +86,14 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
             <MdEditor
               value={value}
               onChange={(value) => {
+                handlePostFormUpdate(getValues());
                 setValue("content", value);
               }}
             ></MdEditor>
           );
         }}
       />
-      <div>
+      <div className="flex">
         <Controller
           control={control}
           name={"tags"}
@@ -86,7 +112,8 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
           }}
         ></Controller>
       </div>
-    </div>
+      <Button className="self-start">Save</Button>
+    </form>
   );
 };
 

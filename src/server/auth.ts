@@ -4,10 +4,11 @@ import {
   type NextAuthOptions,
 } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { drizzleAdapter } from "@/server/drizzleAdapter";
+import drizzleAdapter from "@/server/drizzleAdapter";
 import { env } from "@/env";
-import { db } from "@/server/db";
+import { type TPostSchema } from "@/schemas/post";
 import { type UserRole } from "@/server/db/schema";
+import { cookies } from "next/headers";
 
 /**
  * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
@@ -17,9 +18,11 @@ import { type UserRole } from "@/server/db/schema";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
+    token: string;
     user: {
       id: string;
       role: UserRole;
+      editorProps?: TPostSchema;
       // ...other properties
     } & DefaultSession["user"];
   }
@@ -35,9 +38,12 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user, token }) => {
+    session: async ({ session, user, token, trigger }) => {
+      const sessionId = cookies().get("next-auth.session-token")?.value;
+
       return {
         ...session,
+        token: sessionId ?? "",
         user: {
           ...session.user,
           ...user,
@@ -46,8 +52,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
 
-  // @ts-expect-error: typings mismatch
-  adapter: drizzleAdapter(db),
+  adapter: drizzleAdapter,
   providers: [
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,

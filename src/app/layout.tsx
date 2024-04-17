@@ -4,6 +4,7 @@ import { Footer } from "@/components/navagiation/footer";
 import { Inter } from "next/font/google";
 import { getServerAuthSession } from "@/server/auth";
 import { TRPCReactProvider } from "@/trpc/react";
+import { SessionProvider } from "next-auth/react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +26,7 @@ export default async function RootLayout({
 }) {
   const session = await getServerAuthSession();
 
-  console.log(session);
+  // console.log(session);
 
   return (
     <html lang="en">

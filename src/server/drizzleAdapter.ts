@@ -2,11 +2,11 @@ import { and, eq } from "drizzle-orm";
 import { type MySqlDatabase } from "drizzle-orm/mysql2";
 import * as schema from "@/server/db/schema";
 
-import type { Adapter, AdapterUser, AdapterSession } from "next-auth/adapters";
+import { Adapter } from "next-auth/adapters";
+import type { AdapterUser, AdapterSession } from "next-auth/adapters";
+import { db } from "@/server/db";
 
-export function drizzleAdapter(
-  client: InstanceType<typeof MySqlDatabase>,
-): Adapter {
+function drizzleAdapter(client: InstanceType<typeof MySqlDatabase>): Adapter {
   const { users, accounts, sessions, verificationTokens } = schema;
 
   return {
@@ -80,7 +80,6 @@ export function drizzleAdapter(
         .then((res) => res[0])) as AdapterUser;
     },
     async updateSession(data) {
-      console.log("updateSession", data);
       await client
         .update(sessions)
         .set(data)
@@ -191,3 +190,8 @@ export function drizzleAdapter(
     },
   };
 }
+
+// @ts-ignore
+const Adapter = drizzleAdapter(db);
+
+export default Adapter;
