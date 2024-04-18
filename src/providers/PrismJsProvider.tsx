@@ -6,6 +6,7 @@ import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-css";
 import "prismjs/components/prism-jsx";
+import "prismjs/components/prism-asm6502";
 import "prismjs/components/prism-bash";
 import { usePathname, useSearchParams } from "next/navigation";
 

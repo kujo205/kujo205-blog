@@ -7,6 +7,7 @@ import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
 type PreChildren = {
   props: {
     className: string;
+    children: string;
   };
 };
 
@@ -14,6 +15,7 @@ const Pre: React.FC<
   DetailedHTMLProps<HTMLAttributes<HTMLPreElement>, HTMLPreElement>
 > = ({ children, ...props }) => {
   const lang = (children as PreChildren).props.className.split("-")[1];
+  const preContent = (children as PreChildren).props.children;
 
   const { copy } = useCopyToClipboard();
 
@@ -25,7 +27,7 @@ const Pre: React.FC<
         </span>
         <Button
           className="bg-transparent opacity-75 hover:bg-transparent hover:opacity-100"
-          onClick={() => copy("children", "Text copied to clipboard")}
+          onClick={() => copy(preContent, "Text copied to clipboard")}
         >
           <CopyIcon />
         </Button>
