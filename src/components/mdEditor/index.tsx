@@ -20,7 +20,7 @@ function MdEditor({ onChange, value, ...other }: MdEditorProps) {
     if (!file || !textarea.current) return;
 
     const imageName = `${file.name}-${Date.now()}`;
-    onChange(value + ` [${imageName}](Loading...) `);
+    onChange(value + ` ![${imageName}](Loading...) `);
     const { presignedUrl, accessUrl } = await getUrl({
       imageName: imageName,
     });
@@ -33,8 +33,8 @@ function MdEditor({ onChange, value, ...other }: MdEditorProps) {
 
     onChange(
       textarea.current.value.replace(
-        ` [${imageName}](Loading...) `,
-        ` [${imageName}](${accessUrl}) `,
+        ` ![${imageName}](Loading...) `,
+        ` ![${imageName}](${accessUrl}) `,
       ),
     );
   };

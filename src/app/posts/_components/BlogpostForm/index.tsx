@@ -12,6 +12,7 @@ import { useDebouncedCallback } from "use-debounce";
 import { useSession } from "next-auth/react";
 import { type Session } from "next-auth";
 import { useEffect } from "react";
+import { useDebounce } from "use-debounce";
 
 const initialValues: TPostSchema = {
   content: "",
@@ -55,10 +56,12 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
 
   const titleField = watch("title");
   const tagsField = watch("tags");
+  const _contentField = watch("content");
+  const [contentField] = useDebounce(_contentField, 250);
 
   useEffect(() => {
     handlePostFormUpdate(getValues());
-  }, [titleField, tagsField]);
+  }, [contentField, titleField, tagsField]);
 
   async function handleAddTag(tag: string, cb?: (arg0: TItem[]) => void) {
     addNewTag(
@@ -86,7 +89,6 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
             <MdEditor
               value={value}
               onChange={(value) => {
-                handlePostFormUpdate(getValues());
                 setValue("content", value);
               }}
             ></MdEditor>

@@ -1,10 +1,11 @@
+import "prismjs";
 import "@/styles/globals.css";
 import { Header } from "@/components/navagiation/header";
 import { Footer } from "@/components/navagiation/footer";
 import { Inter } from "next/font/google";
 import { getServerAuthSession } from "@/server/auth";
 import { TRPCReactProvider } from "@/trpc/react";
-import { SessionProvider } from "next-auth/react";
+import PrismJsProvider from "@/app/providers/PrismJsProvider";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -34,9 +35,11 @@ export default async function RootLayout({
         className={`font-sans ${inter.variable} flex min-h-screen flex-col`}
       >
         <TRPCReactProvider>
-          <Header session={session} />
-          {children}
-          <Footer />
+          <PrismJsProvider>
+            <Header session={session} />
+            {children}
+            <Footer />
+          </PrismJsProvider>
         </TRPCReactProvider>
       </body>
     </html>
