@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, type ReactNode } from "react";
+import { useLayoutEffect, type ReactNode } from "react";
 import Prism from "prismjs";
 
-import "prismjs/themes/prism-tomorrow.css";
 import "prismjs/components/prism-typescript";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-css";
@@ -16,8 +15,7 @@ function PrismJsProvider({ children }: { children: ReactNode }) {
 
   const params = searchParams.toString();
 
-  useEffect(() => {
-    console.log("highlighting code", params, pathname);
+  useLayoutEffect(() => {
     Prism.highlightAll();
   }, [pathname, params]);
 

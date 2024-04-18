@@ -5,7 +5,8 @@ import { Footer } from "@/components/navagiation/footer";
 import { Inter } from "next/font/google";
 import { getServerAuthSession } from "@/server/auth";
 import { TRPCReactProvider } from "@/trpc/react";
-import PrismJsProvider from "@/app/providers/PrismJsProvider";
+import PrismJsProvider from "@/providers/PrismJsProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -27,8 +28,6 @@ export default async function RootLayout({
 }) {
   const session = await getServerAuthSession();
 
-  // console.log(session);
-
   return (
     <html lang="en">
       <body
@@ -36,6 +35,12 @@ export default async function RootLayout({
       >
         <TRPCReactProvider>
           <PrismJsProvider>
+            <Toaster
+              position="bottom-center"
+              richColors={true}
+              theme="light"
+              closeButton
+            />
             <Header session={session} />
             {children}
             <Footer />

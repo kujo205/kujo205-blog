@@ -1,4 +1,4 @@
-import components from "./components";
+import index from "./components";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { cn } from "@/lib/utils";
 
@@ -9,8 +9,8 @@ interface MDXProps {
 
 function MDX({ className, source }: MDXProps) {
   return (
-    <div className={cn("prose prose-slate", className)}>
-      <MDXRemote source={source} components={components} />
+    <div className={cn("prose prose-slate max-w-full", className)}>
+      <MDXRemote source={source} components={index} />
     </div>
   );
 }
