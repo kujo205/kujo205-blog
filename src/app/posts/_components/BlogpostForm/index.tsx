@@ -63,13 +63,16 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
     handlePostFormUpdate(getValues());
   }, [contentField, titleField, tagsField]);
 
-  async function handleAddTag(tag: string, cb?: (arg0: TItem[]) => void) {
+  async function handleAddTag(
+    tag: string,
+    cb?: (arg0: TItem[], tagId: number) => void,
+  ) {
     addNewTag(
       { tag },
       {
-        onSuccess: () => {
+        onSuccess: (tagId) => {
           refetchTags().then(({ data }) => {
-            cb?.(data as TItem[]);
+            cb?.(data as TItem[], tagId);
           });
         },
       },

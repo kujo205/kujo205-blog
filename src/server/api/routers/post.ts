@@ -66,9 +66,16 @@ export const postRouter = createTRPCRouter({
 
       const { db } = ctx;
 
-      await db.insert(blogPostTags).values({
-        name: tag,
-      });
+      const result = await db
+        .insert(blogPostTags)
+        .values({
+          name: tag,
+        })
+        .returning({
+          id: blogPostTags.id,
+        });
+
+      return result[0]?.id!;
     }),
 
   savePostValuesToSession: adminProcedure

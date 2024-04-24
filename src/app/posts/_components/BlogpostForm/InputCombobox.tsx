@@ -26,7 +26,10 @@ interface InputComboboxProps {
   items: TItem[];
   selectedItemValues: number[];
   onSelectedItemsChange: (value: number[]) => void;
-  handleAddTag: (value: string, cb?: (items: TItem[]) => void) => void;
+  handleAddTag: (
+    value: string,
+    cb?: (items: TItem[], insertedTagId: number) => void,
+  ) => void;
 }
 
 function InputCombobox({
@@ -98,12 +101,14 @@ function InputCombobox({
                   className="p-[.25rem]"
                   onClick={() => {
                     if (!inputRef?.current) return;
+                    const inputValue = inputRef.current.value;
                     setOpen(false);
-                    handleAddTag(inputRef.current.value, (items) => {
+
+                    handleAddTag(inputValue, (items, insertedTagId) => {
                       const newItem = items.find((item) => {
-                        if (!inputRef?.current) return;
-                        return item.label === inputRef?.current.value;
+                        return item.value === insertedTagId;
                       });
+
                       if (newItem?.value) onItemSelect(newItem.value);
                     });
                   }}
@@ -118,7 +123,7 @@ function InputCombobox({
             {items.map((item) => (
               <CommandItem
                 key={item.value}
-                value={item.value.toString()}
+                value={item.label}
                 onSelect={() => onItemSelect(item.value)}
               >
                 <Check
