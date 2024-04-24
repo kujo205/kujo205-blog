@@ -7,11 +7,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_NAME: z.string(),
-    DATABASE_USER: z.string(),
-    DATABASE_HOST: z.string(),
-    DATABASE_PORT: z.string(),
-    DATABASE_PASSWORD: z.string().optional(),
+    DATABASE_URL: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -50,11 +46,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    DATABASE_PASSWORD: process.env.DATABASE_PASSWORD,
-    DATABASE_PORT: process.env.DATABASE_PORT,
-    DATABASE_NAME: process.env.DATABASE_NAME,
-    DATABASE_HOST: process.env.DATABASE_HOST,
-    DATABASE_USER: process.env.DATABASE_USER,
+    DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
     NEXTAUTH_URL: process.env.NEXTAUTH_URL,

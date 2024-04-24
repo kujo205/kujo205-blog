@@ -4,14 +4,26 @@ import { env } from "@/env";
 
 export default {
   schema: "./src/server/db/schema.ts",
-  driver: "mysql2",
   dbCredentials: {
-    user: env.DATABASE_USER,
-    host: env.DATABASE_HOST,
-    port: +env.DATABASE_PORT,
-    password: env.DATABASE_PASSWORD,
-    database: env.DATABASE_NAME,
+    connectionString: env.DATABASE_URL,
   },
+  driver: "pg",
   tablesFilter: ["kujo205-blog_*"],
   out: "./src/server/db",
 } satisfies Config;
+
+/*
+* import "dotenv/config";
+import type { Config } from "drizzle-kit";
+
+if (!process.env.DATABASE_URL) {
+  throw new Error("DATABASE_URL is missing");
+}
+
+export default {
+  schema: "./src/schema.ts",
+  out: "./drizzle",
+  connectionString: process.env.DATABASE_URL,
+} satisfies Config;
+*
+* */

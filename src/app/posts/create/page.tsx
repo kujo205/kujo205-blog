@@ -14,7 +14,7 @@ export default async function Page({
   const data = await api.post.getPostValuesFromSession.query();
   // @ts-expect-error: types suck
   const defaultFormValues = data[0].postFormValues as TPostSchema;
-  const content = defaultFormValues.content || "";
+  const content = defaultFormValues?.content || "";
 
   return (
     <main className="flex flex-col items-center p-4">

@@ -1,14 +1,10 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2";
-
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import * as schema from "./schema";
 import { env } from "@/env";
 
-export const connection = mysql.createConnection({
-  host: env.DATABASE_HOST,
-  user: env.DATABASE_USER,
-  database: env.DATABASE_NAME,
-  port: +env.DATABASE_PORT,
-  password: env.DATABASE_PASSWORD,
+export const connection = postgres(env.DATABASE_URL, {
+  prepare: false,
 });
 
-export const db = drizzle(connection);
+export const db = drizzle(connection, { schema });
