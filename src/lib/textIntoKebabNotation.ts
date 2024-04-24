@@ -1,3 +1,5 @@
-export function textIntoKebabNotation(text: string): string {
-  return text.replace(/([a-z])([A-Z])/g, "$1-$2").toLowerCase();
-}
+export const kebabCase = (str: string) =>
+  str
+    .replace(/([a-z])([A-Z])/g, "$1-$2")
+    .replace(/[\s_]+/g, "-")
+    .toLowerCase();

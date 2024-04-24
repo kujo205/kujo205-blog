@@ -1,8 +1,8 @@
 "use client";
-import { type DetailedHTMLProps, type HTMLAttributes } from "react";
+import { type DetailedHTMLProps, type HTMLAttributes, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { CopyIcon } from "lucide-react";
-import { useCopyToClipboard } from "@/hooks/useCopyToClipboard";
+import { copy } from "@/hooks/useCopyToClipboard";
 
 type PreChildren = {
   props: {
@@ -14,10 +14,9 @@ type PreChildren = {
 const Pre: React.FC<
   DetailedHTMLProps<HTMLAttributes<HTMLPreElement>, HTMLPreElement>
 > = ({ children, ...props }) => {
+  const [isCopying, setIsCopying] = useState(false);
   const lang = (children as PreChildren).props.className.split("-")[1];
   const preContent = (children as PreChildren).props.children;
-
-  const { copy } = useCopyToClipboard();
 
   return (
     <div className="rounded-t-[8px] bg-[#2D2D2D]">
@@ -25,12 +24,22 @@ const Pre: React.FC<
         <span>
           <span className="text-[#A9B1D6]">{lang}</span>
         </span>
-        <Button
-          className="bg-transparent opacity-75 hover:bg-transparent hover:opacity-100"
-          onClick={() => copy(preContent, "Text copied to clipboard")}
-        >
-          <CopyIcon />
-        </Button>
+        <div className="flex h-[40px] items-center">
+          {isCopying ? (
+            <span className="text-[#A9B1D6]">Copied!</span>
+          ) : (
+            <Button
+              className="bg-transparent opacity-75 hover:bg-transparent hover:opacity-100"
+              onClick={() => {
+                setIsCopying(true);
+                copy(preContent);
+                setTimeout(() => setIsCopying(false), 1500);
+              }}
+            >
+              <CopyIcon />
+            </Button>
+          )}
+        </div>
       </div>
       <pre {...props} className="my-0 rounded-t-none border-t">
         {children}

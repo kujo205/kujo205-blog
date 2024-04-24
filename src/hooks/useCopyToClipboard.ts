@@ -3,10 +3,14 @@ import { toast } from "sonner";
 const useCopyToClipboard = () => {
   return {
     copy: async (text: string, toastMessage: string) => {
-      await navigator.clipboard.writeText(text);
+      await copy(text);
       toast.info(toastMessage);
     },
   };
 };
 
-export { useCopyToClipboard };
+async function copy(text: string) {
+  await navigator.clipboard.writeText(text);
+}
+
+export { useCopyToClipboard, copy };
