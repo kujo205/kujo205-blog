@@ -4,7 +4,7 @@ import {
   H1Component,
   H2Component,
   H3Component,
-} from "@/components/mdPreview/components/HTags";
+} from "@/components/mdPreview/components/MDX/components/HTags";
 
 type TComponents = MDXRemoteProps["components"];
 

@@ -9,7 +9,7 @@ type DetailedProps<T> = DetailedHTMLProps<HTMLAttributes<T>, T>;
 import { PaperclipIcon } from "lucide-react";
 
 export function withPaperClipAnchor<
-  P extends JSX.IntrinsicAttributes & { children: ReactNode },
+  P extends JSX.IntrinsicAttributes & { children?: ReactNode },
 >(Component: React.ComponentType<P>) {
   function WithPaperClipAnchor(props: P) {
     const { copy } = useCopyToClipboard();
@@ -47,13 +47,13 @@ export function withPaperClipAnchor<
 }
 
 export const H1Component = withPaperClipAnchor(
-  (props: DetailedProps<HTMLHeadingElement>) => <h1 {...props} />,
-);
-
-export const H2Component = withPaperClipAnchor(
   (props: DetailedProps<HTMLHeadingElement>) => <h2 {...props} />,
 );
 
-export const H3Component = withPaperClipAnchor(
+export const H2Component = withPaperClipAnchor(
   (props: DetailedProps<HTMLHeadingElement>) => <h3 {...props} />,
+);
+
+export const H3Component = withPaperClipAnchor(
+  (props: DetailedProps<HTMLHeadingElement>) => <h4 {...props} />,
 );

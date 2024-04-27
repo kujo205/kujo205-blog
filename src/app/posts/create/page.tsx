@@ -3,8 +3,9 @@ import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
 import { PreviewTabTrigger, EditorTabTrigger } from "./_components/TabTriggers";
 import { api } from "@/trpc/server";
 import { type TPostSchema } from "@/schemas/post";
-import { MDX } from "@/components/mdPreview/MDX";
+import { MdPreview } from "@/components/mdPreview";
 // import { serializeMDX } from "@/components/mdPreview/serializeMDX";
+export const dynamic = "force-dynamic";
 
 export default async function Page({
   searchParams: { tab },
@@ -14,7 +15,6 @@ export default async function Page({
   const data = await api.post.getPostValuesFromSession.query();
   // @ts-expect-error: types suck
   const defaultFormValues = data[0].postFormValues as TPostSchema;
-  const content = defaultFormValues?.content || "";
 
   return (
     <main className="flex flex-col items-center p-4">
@@ -30,7 +30,7 @@ export default async function Page({
           <BlogPostForm defaultValues={defaultFormValues} />
         </TabsContent>
         <TabsContent value="preview">
-          <MDX source={content} />
+          <MdPreview {...defaultFormValues} />
         </TabsContent>
       </Tabs>
     </main>

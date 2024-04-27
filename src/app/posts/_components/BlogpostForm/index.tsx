@@ -37,7 +37,7 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
     async (postForm: TPostSchema) => {
       savePostValuesToSession({ postFormValues: postForm });
     },
-    400,
+    250,
   );
 
   const {
