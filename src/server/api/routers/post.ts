@@ -16,22 +16,32 @@ import {
   tagsToBlogPosts,
 } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
-import { eq } from "drizzle-orm";
+import { eq, ilike } from "drizzle-orm";
 
 //TODO: add services here
 export const postRouter = createTRPCRouter({
   getPosts: publicProcedure
     .input(
       z.object({
+        search: z.string(),
         page: z.number(),
         pageSize: z.number(),
         tagIds: z.array(z.number()),
       }),
     )
-    .query(({ input, ctx }) => {
+    .query(async ({ input, ctx }) => {
+      const { db } = ctx;
+
+      const posts = await db.query.blogPosts.findMany({
+        where: ilike(blogPosts.title, `%${input.search}%`),
+        with: {
+          tags: true,
+        },
+      });
+
       return {
         ...input,
-        posts: [],
+        posts,
         left: 0,
       };
     }),

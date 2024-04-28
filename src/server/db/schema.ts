@@ -55,8 +55,12 @@ export const blogPostTagsRelations = relations(blogPostTags, ({ many }) => ({
 
 export const tagsToBlogPosts = pgTable("tagsToBlogPosts", {
   id: serial("id").primaryKey(),
-  blogPostId: serial("blogPostId").notNull(),
-  tagId: serial("tagId").notNull(),
+  blogPostId: serial("blogPostId")
+    .notNull()
+    .references(() => blogPosts.id),
+  tagId: serial("tagId")
+    .notNull()
+    .references(() => blogPostTags.id),
 });
 
 export const tagsToBlogPostsRelations = relations(
