@@ -4,7 +4,8 @@ import { PreviewTabTrigger, EditorTabTrigger } from "./_components/TabTriggers";
 import { api } from "@/trpc/server";
 import { type TPostSchema } from "@/schemas/post";
 import { MdPreview } from "@/components/mdPreview";
-// import { serializeMDX } from "@/components/mdPreview/serializeMDX";
+import { CreatePostForm } from "./_components/CreatePostForm";
+
 export const dynamic = "force-dynamic";
 
 export default async function Page({
@@ -27,7 +28,7 @@ export default async function Page({
           <PreviewTabTrigger />
         </TabsList>
         <TabsContent value="editor">
-          <BlogPostForm defaultValues={defaultFormValues} />
+          <CreatePostForm defaultValues={defaultFormValues} />
         </TabsContent>
         <TabsContent value="preview">
           <MdPreview {...defaultFormValues} />

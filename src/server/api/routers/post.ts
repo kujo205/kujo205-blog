@@ -9,7 +9,12 @@ import {
 } from "@/server/api/trpc";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { PutObjectCommand } from "@aws-sdk/client-s3";
-import { blogPostTags, sessions } from "@/server/db/schema";
+import {
+  blogPosts,
+  blogPostTags,
+  sessions,
+  tagsToBlogPosts,
+} from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 
@@ -112,6 +117,51 @@ export const postRouter = createTRPCRouter({
       return { label: name, value: id };
     });
   }),
+
+  createPost: adminProcedure
+    .input(z.object({ post: postSchema }))
+    .mutation(async ({ ctx, input: { post } }) => {
+      const { db, session } = ctx;
+
+      console.log("creating a post", post);
+
+      const resultFromDb = await db
+        .insert(blogPosts)
+        .values({
+          content: post.content,
+          title: post.title,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        })
+        .returning({
+          id: blogPosts.id,
+        });
+
+      if (!resultFromDb[0]) throw new Error("Failed to create post");
+      const postId = resultFromDb[0].id;
+
+      const insertStatements = post.tags.map((tagId) =>
+        db
+          .insert(tagsToBlogPosts)
+          .values({
+            blogPostId: postId,
+            tagId,
+          })
+          .returning({
+            id: tagsToBlogPosts.id,
+          }),
+      );
+
+      const result = await Promise.all(insertStatements);
+      console.log("inserted tag ids", result);
+      //
+      // await db.insert(tagsToBlogPosts).values({
+      //   blogPostId: postId,
+      //   tagId: post.,
+      // });
+
+      return postId;
+    }),
 
   // create: protectedProcedure
   //   .input(z.object({ name: z.string().min(1) }))

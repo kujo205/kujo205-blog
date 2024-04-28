@@ -9,22 +9,27 @@ import { api } from "@/trpc/react";
 import type { TItem } from "./InputCombobox";
 import { Button } from "@/components/ui/button";
 import { useDebouncedCallback } from "use-debounce";
-import { useSession } from "next-auth/react";
-import { type Session } from "next-auth";
 import { useEffect } from "react";
 import { useDebounce } from "use-debounce";
 
 const initialValues: TPostSchema = {
   content: "",
-  tags: [999999, 999998],
-  title: "Blog post №1",
+  tags: [],
+  title: "New Post Title",
 };
-interface BlogpostFormProps {
+export interface BlogpostFormProps {
   defaultValues?: TPostSchema;
-  //TODO: replace with api endpoint
-  setEditorValue?: (arg0: string) => void;
+  submitHandler: (data: TPostSchema) => void;
+  saveFormToSession?: boolean;
+  resetAfterSubmission?: boolean;
 }
-const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
+
+const BlogPostForm = ({
+  defaultValues,
+  submitHandler,
+  saveFormToSession = false,
+  resetAfterSubmission = false,
+}: BlogpostFormProps) => {
   defaultValues = defaultValues ?? initialValues;
 
   const { data: tagsOptions, refetch: refetchTags } =
@@ -60,6 +65,7 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
   const [contentField] = useDebounce(_contentField, 250);
 
   useEffect(() => {
+    if (!saveFormToSession) return;
     handlePostFormUpdate(getValues());
   }, [contentField, titleField, tagsField]);
 
@@ -79,8 +85,16 @@ const BlogPostForm = ({ defaultValues }: BlogpostFormProps) => {
     );
   }
 
+  function handleSubmitAndMaybeResetForm(data: TPostSchema) {
+    submitHandler(data);
+    if (resetAfterSubmission) reset(initialValues);
+  }
+
   return (
-    <form className="flex flex-col gap-4">
+    <form
+      className="flex flex-col gap-4"
+      onSubmit={handleSubmit(handleSubmitAndMaybeResetForm)}
+    >
       <LabelWrapper label="Post title" className="text-lg text-violet-600">
         <Input {...register("title")} className="text-lg" />
       </LabelWrapper>
