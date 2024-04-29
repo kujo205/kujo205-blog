@@ -1,5 +1,11 @@
 import { SocialMedia } from "@/components/icons/social-media";
-import { Menu, Delete, MousePointerClick, PlusIcon } from "lucide-react";
+import {
+  Menu,
+  Delete,
+  MousePointerClick,
+  PlusIcon,
+  Search,
+} from "lucide-react";
 
 export const Icons = {
   SocialMedia,

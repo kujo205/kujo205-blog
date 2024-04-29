@@ -31,7 +31,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const blogPosts = pgTable("blogPost", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 256 }),
-  description: varchar("description", { length: 256 }),
+  description: text("description"),
   content: text("content"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().defaultNow(),
@@ -47,7 +47,7 @@ export const blogPostsRelations = relations(blogPosts, ({ many }) => ({
 
 export const blogPostTags = pgTable("postTag", {
   id: serial("id").primaryKey(),
-  name: varchar("name", { length: 255 }),
+  name: varchar("name", { length: 255 }).notNull(),
 });
 
 export const blogPostTagsRelations = relations(blogPostTags, ({ many }) => ({
@@ -146,3 +146,4 @@ export const messages = pgTable("message", {
 });
 
 export type UserRole = typeof users.$inferSelect.role;
+export type TTag = typeof blogPostTags.$inferSelect;
