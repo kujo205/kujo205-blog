@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { env } from "@/env";
 import { postSchema } from "@/schemas/post";
+import AIService from "@/server/api/services/OpenAI.service";
 import {
   createTRPCRouter,
   protectedProcedure,
@@ -16,7 +17,7 @@ import {
   tagsToBlogPosts,
 } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, gt, ilike, inArray, ne } from "drizzle-orm";
+import { and, eq, ilike, inArray } from "drizzle-orm";
 
 //TODO: add services here
 export const postRouter = createTRPCRouter({
@@ -139,6 +140,9 @@ export const postRouter = createTRPCRouter({
     .input(z.object({ post: postSchema }))
     .mutation(async ({ ctx, input: { post } }) => {
       const { db, session } = ctx;
+
+      const completion = await AIService.summarize(post.content);
+      const description = completion.choices[0]?.text ?? "";
 
       const resultFromDb = await db
         .insert(blogPosts)
