@@ -42,7 +42,6 @@ export const blogPostsRelations = relations(blogPosts, ({ many }) => ({
   user: many(users),
   comments: many(comments),
   tagsToBlogPosts: many(tagsToBlogPosts),
-  tags: many(blogPostTags),
 }));
 
 export const blogPostTags = pgTable("postTag", {
@@ -54,20 +53,15 @@ export const blogPostTagsRelations = relations(blogPostTags, ({ many }) => ({
   tagsToBlogPosts: many(tagsToBlogPosts),
 }));
 
-export const tagsToBlogPosts = pgTable(
-  "tagsToBlogPosts",
-  {
-    blogPostId: integer("blogPostId")
-      .notNull()
-      .references(() => blogPosts.id),
-    tagId: integer("tagId")
-      .notNull()
-      .references(() => blogPostTags.id),
-  },
-  (self) => ({
-    pk: primaryKey({ columns: [self.blogPostId, self.tagId] }),
-  }),
-);
+export const tagsToBlogPosts = pgTable("tagsToBlogPosts", {
+  id: serial("id").primaryKey(),
+  blogPostId: integer("blogPostId")
+    .notNull()
+    .references(() => blogPosts.id),
+  tagId: integer("tagId")
+    .notNull()
+    .references(() => blogPostTags.id),
+});
 
 export const tagsToBlogPostsRelations = relations(
   tagsToBlogPosts,

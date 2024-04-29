@@ -3,8 +3,8 @@ export default async function Page() {
   const resonse = await api.post.getPosts.query({
     page: 0,
     pageSize: 10,
-    search: "Post",
-    tagIds: [1, 2, 3],
+    search: "w",
+    tagIds: [1, 2],
   });
 
   return (
