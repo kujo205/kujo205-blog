@@ -147,6 +147,7 @@ export const postRouter = createTRPCRouter({
       const resultFromDb = await db
         .insert(blogPosts)
         .values({
+          description: description,
           content: post.content,
           title: post.title,
           createdAt: new Date(),

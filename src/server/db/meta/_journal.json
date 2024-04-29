@@ -8,6 +8,13 @@
       "when": 1714417567153,
       "tag": "0000_lame_shinko_yamashiro",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1714421236029,
+      "tag": "0001_mysterious_pretty_boy",
+      "breakpoints": true
     }
   ]
 }

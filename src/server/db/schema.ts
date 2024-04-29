@@ -31,6 +31,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 export const blogPosts = pgTable("blogPost", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 256 }),
+  description: varchar("description", { length: 256 }),
   content: text("content"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().defaultNow(),
