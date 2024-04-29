@@ -35,8 +35,14 @@ export const postRouter = createTRPCRouter({
       const posts = await db.query.blogPosts.findMany({
         where: ilike(blogPosts.title, `%${input.search}%`),
         with: {
-          tags: true,
+          tagsToBlogPosts: {
+            with: {
+              blogPostTags: true,
+            },
+          },
         },
+        limit: input.pageSize,
+        offset: input.page * input.pageSize,
       });
 
       return {
@@ -164,11 +170,6 @@ export const postRouter = createTRPCRouter({
 
       const result = await Promise.all(insertStatements);
       console.log("inserted tag ids", result);
-      //
-      // await db.insert(tagsToBlogPosts).values({
-      //   blogPostId: postId,
-      //   tagId: post.,
-      // });
 
       return postId;
     }),

@@ -50,8 +50,8 @@ CREATE TABLE IF NOT EXISTS "kujo205_blog_session" (
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "kujo205_blog_tagsToBlogPosts" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"blogPostId" varchar(255) NOT NULL,
-	"tagId" varchar(255) NOT NULL
+	"blogPostId" integer NOT NULL,
+	"tagId" integer NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "kujo205_blog_user" (
@@ -69,3 +69,15 @@ CREATE TABLE IF NOT EXISTS "kujo205_blog_verificationToken" (
 	"expires" timestamp NOT NULL,
 	CONSTRAINT "kujo205_blog_verificationToken_identifier_token_pk" PRIMARY KEY("identifier","token")
 );
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "kujo205_blog_tagsToBlogPosts" ADD CONSTRAINT "kujo205_blog_tagsToBlogPosts_blogPostId_kujo205_blog_blogPost_id_fk" FOREIGN KEY ("blogPostId") REFERENCES "kujo205_blog_blogPost"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "kujo205_blog_tagsToBlogPosts" ADD CONSTRAINT "kujo205_blog_tagsToBlogPosts_tagId_kujo205_blog_postTag_id_fk" FOREIGN KEY ("tagId") REFERENCES "kujo205_blog_postTag"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;

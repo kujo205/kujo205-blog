@@ -1,6 +1,6 @@
 {
-  "id": "8d460277-4111-4c2a-9569-ebe1b6f2a802",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "12a4439b-b7d5-4165-a099-9c4924186572",
+  "prevId": "8d460277-4111-4c2a-9569-ebe1b6f2a802",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -266,12 +266,6 @@
       "name": "kujo205_blog_tagsToBlogPosts",
       "schema": "",
       "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
         "blogPostId": {
           "name": "blogPostId",
           "type": "integer",
@@ -314,7 +308,15 @@
           "onUpdate": "no action"
         }
       },
-      "compositePrimaryKeys": {},
+      "compositePrimaryKeys": {
+        "kujo205_blog_tagsToBlogPosts_blogPostId_tagId_pk": {
+          "name": "kujo205_blog_tagsToBlogPosts_blogPostId_tagId_pk",
+          "columns": [
+            "blogPostId",
+            "tagId"
+          ]
+        }
+      },
       "uniqueConstraints": {}
     },
     "kujo205_blog_user": {

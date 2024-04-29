@@ -6,8 +6,8 @@ import {
   varchar,
   jsonb,
   pgTableCreator,
-  serial,
   primaryKey,
+  serial,
 } from "drizzle-orm/pg-core";
 
 export const pgTable = pgTableCreator((name) => `kujo205_blog_${name}`);
@@ -41,6 +41,7 @@ export const blogPosts = pgTable("blogPost", {
 export const blogPostsRelations = relations(blogPosts, ({ many }) => ({
   user: many(users),
   comments: many(comments),
+  tagsToBlogPosts: many(tagsToBlogPosts),
   tags: many(blogPostTags),
 }));
 
@@ -50,24 +51,35 @@ export const blogPostTags = pgTable("postTag", {
 });
 
 export const blogPostTagsRelations = relations(blogPostTags, ({ many }) => ({
-  blogPost: many(blogPosts),
+  tagsToBlogPosts: many(tagsToBlogPosts),
 }));
 
-export const tagsToBlogPosts = pgTable("tagsToBlogPosts", {
-  id: serial("id").primaryKey(),
-  blogPostId: serial("blogPostId")
-    .notNull()
-    .references(() => blogPosts.id),
-  tagId: serial("tagId")
-    .notNull()
-    .references(() => blogPostTags.id),
-});
+export const tagsToBlogPosts = pgTable(
+  "tagsToBlogPosts",
+  {
+    blogPostId: integer("blogPostId")
+      .notNull()
+      .references(() => blogPosts.id),
+    tagId: integer("tagId")
+      .notNull()
+      .references(() => blogPostTags.id),
+  },
+  (self) => ({
+    pk: primaryKey({ columns: [self.blogPostId, self.tagId] }),
+  }),
+);
 
 export const tagsToBlogPostsRelations = relations(
   tagsToBlogPosts,
   ({ one }) => ({
-    blogPost: one(blogPosts),
-    tag: one(blogPostTags),
+    blogPost: one(blogPosts, {
+      fields: [tagsToBlogPosts.blogPostId],
+      references: [blogPosts.id],
+    }),
+    blogPostTags: one(blogPostTags, {
+      fields: [tagsToBlogPosts.tagId],
+      references: [blogPostTags.id],
+    }),
   }),
 );
 
