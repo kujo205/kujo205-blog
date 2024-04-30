@@ -3,23 +3,26 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import { SortOptionsSelect } from "./SortOptionsSelect";
-import { useMemo, useState } from "react";
+import { useMemo, type SetStateAction, type Dispatch } from "react";
+import { api } from "@/trpc/react";
 
 interface PostSearchProps {
-  tags: { value: number; label: string }[];
+  selectedTagIds: number[];
+  setSelectedTagIds: Dispatch<SetStateAction<number[]>>;
 }
 
-function PostSearch({ tags }: PostSearchProps) {
-  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+function PostSearch({ setSelectedTagIds, selectedTagIds }: PostSearchProps) {
+  const { data: tags } = api.post.getAllTags.useQuery();
 
   const sortedTags = useMemo(() => {
+    if (!tags) return [];
     return tags.sort((a, b) => {
       if (selectedTagIds.includes(a.value)) {
         return -1;
       }
       return 0;
     });
-  }, [selectedTagIds]);
+  }, [selectedTagIds, tags]);
 
   function handleSelectTag(tagId: number) {
     setSelectedTagIds((prev) => {

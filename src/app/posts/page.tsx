@@ -1,21 +1,26 @@
-import { api } from "@/trpc/server";
+"use client";
+import { api } from "@/trpc/react";
 import { PostSearch } from "./_components/PostSearch";
+import { useState } from "react";
 
-export default async function Page() {
-  const postsResponse = await api.post.getPosts.query({
+export default function Page() {
+  const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+
+  const { data: postsResponse } = api.post.getPosts.useQuery({
     page: 0,
-    pageSize: 10,
-    search: "w",
-    tagIds: [1, 2],
+    pageSize: 300,
+    search: "",
+    tagIds: selectedTagIds,
   });
-
-  const tags = await api.post.getAllTags.query();
 
   return (
     <main className="flex flex-col items-center px-[16px] py-[62px]">
-      <PostSearch tags={tags} />
-      <span>{JSON.stringify(postsResponse, undefined, 2)}</span>
-      {postsResponse.left}
+      <PostSearch
+        setSelectedTagIds={setSelectedTagIds}
+        selectedTagIds={selectedTagIds}
+      />
+      {JSON.stringify(postsResponse, undefined, 2)}
+      {/*{postsResponse.left}*/}
       <h1>Working on it cap</h1>
     </main>
   );

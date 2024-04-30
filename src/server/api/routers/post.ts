@@ -17,7 +17,7 @@ import {
   tagsToBlogPosts,
 } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, ilike, inArray } from "drizzle-orm";
+import { and, eq, ilike, inArray, arrayOverlaps } from "drizzle-orm";
 
 //TODO: add services here
 export const postRouter = createTRPCRouter({
@@ -40,26 +40,33 @@ export const postRouter = createTRPCRouter({
             with: {
               blogPostTags: true,
             },
-            where: and(inArray(tagsToBlogPosts.tagId, input.tagIds)),
           },
         },
         limit: input.pageSize,
         offset: input.page * input.pageSize,
       });
 
-      // console.log('posts',posts);
+      const postsSortedByTags = posts
+        .filter((post) => {
+          const tagIds = post.tagsToBlogPosts.map((tag) => tag.tagId);
+          return input.tagIds.some((tagId) => tagIds.includes(tagId));
+        })
+        .sort((postA, postB) => {
+          const aTagIds = postA.tagsToBlogPosts.map((tag) => tag.tagId);
+          const bTagIds = postB.tagsToBlogPosts.map((tag) => tag.tagId);
+
+          return (
+            countHowManyMatches(bTagIds, input.tagIds) -
+            countHowManyMatches(aTagIds, input.tagIds)
+          );
+
+          return 1;
+        });
 
       return {
         ...input,
-        posts,
+        posts: postsSortedByTags,
         left: 0,
-      };
-    }),
-  hello: publicProcedure
-    .input(z.object({ text: z.string() }))
-    .query(({ input }) => {
-      return {
-        greeting: `Hello ${input.text}`,
       };
     }),
   getStandardUploadPreassignedUrl: protectedProcedure
@@ -175,6 +182,11 @@ export const postRouter = createTRPCRouter({
       );
 
       const result = await Promise.all(insertStatements);
+      console.log("successfully inserted tags");
       return postId;
     }),
 });
+
+function countHowManyMatches(a: number[], b: number[]) {
+  return a.filter((v) => b.includes(v)).length;
+}
