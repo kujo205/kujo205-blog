@@ -9,7 +9,7 @@ export default function Page() {
   const { data: postsResponse } = api.post.getPosts.useQuery({
     page: 0,
     pageSize: 300,
-    search: "",
+    search: "P",
     tagIds: selectedTagIds,
   });
 

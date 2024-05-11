@@ -35,6 +35,7 @@ export const blogPosts = pgTable("blogPost", {
   content: text("content"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().defaultNow(),
+  thumbnail: varchar("thumbnail", { length: 255 }),
   likes: integer("likes").default(0),
   watched: integer("watched").default(0),
 });

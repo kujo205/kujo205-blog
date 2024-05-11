@@ -11,12 +11,15 @@ import { Button } from "@/components/ui/button";
 import { useDebouncedCallback } from "use-debounce";
 import { useEffect } from "react";
 import { useDebounce } from "use-debounce";
+import { PhotoInputField } from "./PhotoInputField";
 
 const initialValues: TPostSchema = {
   content: "",
   tags: [],
   title: "New Post Title",
+  thumbnail: undefined,
 };
+
 export interface BlogpostFormProps {
   defaultValues?: TPostSchema;
   submitHandler: (data: TPostSchema) => void;
@@ -62,12 +65,14 @@ const BlogPostForm = ({
   const titleField = watch("title");
   const tagsField = watch("tags");
   const _contentField = watch("content");
+  const photoField = watch("thumbnail");
+
   const [contentField] = useDebounce(_contentField, 250);
 
   useEffect(() => {
     if (!saveFormToSession) return;
     handlePostFormUpdate(getValues());
-  }, [contentField, titleField, tagsField]);
+  }, [contentField, titleField, tagsField, photoField]);
 
   async function handleAddTag(
     tag: string,
@@ -85,9 +90,11 @@ const BlogPostForm = ({
     );
   }
 
-  function handleSubmitAndMaybeResetForm(data: TPostSchema) {
-    submitHandler(data);
-    if (resetAfterSubmission) reset(initialValues);
+  async function handleSubmitAndMaybeResetForm(formData: TPostSchema) {
+    submitHandler(formData);
+    if (resetAfterSubmission) {
+      reset(initialValues);
+    }
   }
 
   return (
@@ -112,6 +119,26 @@ const BlogPostForm = ({
           );
         }}
       />
+
+      <div>
+        <Controller
+          control={control}
+          name={"thumbnail"}
+          render={({ field: { value } }) => {
+            console.log("rendering thumbnail", value);
+
+            return (
+              <PhotoInputField
+                imageUrl={value}
+                onPhotoChange={(href) => {
+                  setValue("thumbnail", href);
+                }}
+              />
+            );
+          }}
+        />
+      </div>
+
       <div className="flex">
         <Controller
           control={control}
@@ -124,13 +151,13 @@ const BlogPostForm = ({
                   setValue("tags", value);
                 }}
                 selectedItemValues={value}
-                // @ts-expect-error: typings from drizzle
                 items={tagsOptions ?? []}
               />
             );
           }}
         ></Controller>
       </div>
+
       <Button className="self-start">Save</Button>
     </form>
   );

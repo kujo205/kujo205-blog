@@ -29,6 +29,13 @@
       "when": 1714428204031,
       "tag": "0003_absent_solo",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1715415028113,
+      "tag": "0004_freezing_nebula",
+      "breakpoints": true
     }
   ]
 }

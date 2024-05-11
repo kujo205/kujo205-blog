@@ -56,7 +56,6 @@ function MdEditor({ onChange, value, ...other }: MdEditorProps) {
         className="h-[9999px] w-full resize-none overflow-y-hidden whitespace-nowrap border-0 p-0 py-[8px] text-lg outline-0"
         {...other}
         onChange={(event) => {
-          // console.log(textarea?.current.getBoundingClientRect());
           onChange(event.target.value);
           setLineCount(getLineCount(event.target.value));
         }}

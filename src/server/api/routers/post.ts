@@ -46,9 +46,13 @@ export const postRouter = createTRPCRouter({
         offset: input.page * input.pageSize,
       });
 
+      const postInputTagsSize = input.tagIds.length;
+
       const postsSortedByTags = posts
         .filter((post) => {
           const tagIds = post.tagsToBlogPosts.map((tag) => tag.tagId);
+          if (postInputTagsSize === 0) return true;
+
           return input.tagIds.some((tagId) => tagIds.includes(tagId));
         })
         .sort((postA, postB) => {
@@ -157,6 +161,7 @@ export const postRouter = createTRPCRouter({
         .insert(blogPosts)
         .values({
           description: description,
+          thumbnail: post.thumbnail,
           content: post.content,
           title: post.title,
           createdAt: new Date(),
@@ -182,7 +187,6 @@ export const postRouter = createTRPCRouter({
       );
 
       const result = await Promise.all(insertStatements);
-      console.log("successfully inserted tags");
       return postId;
     }),
 });
