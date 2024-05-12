@@ -1,10 +1,11 @@
-import { Upload } from "lucide-react";
+import { Upload, Delete } from "lucide-react";
 import * as React from "react";
 import { api } from "@/trpc/react";
 import axios from "axios";
+import { Button } from "@/components/ui/button";
 
 interface PhotoInputFieldProps {
-  onPhotoChange: (href: string) => void;
+  onPhotoChange: (href: string | undefined) => void;
   imageUrl?: string;
 }
 
@@ -47,7 +48,9 @@ const PhotoInputField = ({ onPhotoChange, imageUrl }: PhotoInputFieldProps) => {
           }
         >
           <div className="flex flex-col items-center justify-center px-5">
-            <Upload />
+            <div className="flex gap-[8px]">
+              <Upload />
+            </div>
             <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
               <span className="font-semibold">Click to upload</span>
             </p>
@@ -64,6 +67,17 @@ const PhotoInputField = ({ onPhotoChange, imageUrl }: PhotoInputFieldProps) => {
           />
         </label>
       </div>
+      <Button
+        variant="default"
+        className="inline-flex gap-[8px] self-start"
+        type="button"
+        onClick={() => {
+          onPhotoChange(undefined);
+        }}
+      >
+        Delete a thumbnail
+        <Delete />
+      </Button>
     </div>
   );
 };
