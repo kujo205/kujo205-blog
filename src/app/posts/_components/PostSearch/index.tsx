@@ -9,9 +9,16 @@ import { api } from "@/trpc/react";
 interface PostSearchProps {
   selectedTagIds: number[];
   setSelectedTagIds: Dispatch<SetStateAction<number[]>>;
+  handleSearchValueChange: (value: string) => void;
+  onSearchBtnClick: () => void;
 }
 
-function PostSearch({ setSelectedTagIds, selectedTagIds }: PostSearchProps) {
+function PostSearch({
+  setSelectedTagIds,
+  selectedTagIds,
+  handleSearchValueChange,
+  onSearchBtnClick,
+}: PostSearchProps) {
   const { data: tags } = api.post.getAllTags.useQuery();
 
   const sortedTags = useMemo(() => {
@@ -34,13 +41,16 @@ function PostSearch({ setSelectedTagIds, selectedTagIds }: PostSearchProps) {
   }
 
   return (
-    <div className="0:w-full flex max-w-[1080px] flex-col gap-[16px]">
+    <div className="flex max-w-[1080px] flex-col gap-[16px] 0:w-full">
       {/* search with select */}
       <div className=" flex justify-between rounded bg-gradient-to-r from-[#4F3ABA] to-[#D94E68] p-[16px] max-sm:flex-col max-sm:gap-[16px]">
         <div className="flex w-full flex-[.55] gap-[8px]">
-          <Input placeholder="Search for a post..." />
+          <Input
+            placeholder="Search for a post..."
+            onChange={(event) => handleSearchValueChange(event.target.value)}
+          />
           <Button variant="outline" className="p-[8px]">
-            <Search />
+            <Search onChange={() => onSearchBtnClick()} />
           </Button>
         </div>
         <SortOptionsSelect className="w-full flex-[.2]" />

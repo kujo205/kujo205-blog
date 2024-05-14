@@ -2,20 +2,31 @@
 import { api } from "@/trpc/react";
 import { PostSearch } from "./_components/PostSearch";
 import { useState } from "react";
+import { useDebounce } from "use-debounce";
 
 export default function Page() {
   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+  const [search, setSearch] = useState<string>("");
+  const [debouncedSearch] = useDebounce(search, 300);
 
-  const { data: postsResponse } = api.post.getPosts.useQuery({
+  function handleSearchValueChange(value: string) {
+    setSearch(value);
+  }
+
+  const { data: postsResponse, refetch } = api.post.getPosts.useQuery({
     page: 0,
-    pageSize: 300,
-    search: "P",
+    pageSize: 5,
+    search: debouncedSearch,
     tagIds: selectedTagIds,
   });
 
   return (
-    <main className="flex flex-col items-center px-[16px] py-[62px]">
+    <main className="flex flex-col items-center px-4 py-16">
       <PostSearch
+        onSearchBtnClick={() => {
+          refetch();
+        }}
+        handleSearchValueChange={handleSearchValueChange}
         setSelectedTagIds={setSelectedTagIds}
         selectedTagIds={selectedTagIds}
       />

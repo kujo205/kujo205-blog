@@ -17,7 +17,8 @@ import {
   tagsToBlogPosts,
 } from "@/server/db/schema";
 import { TRPCError } from "@trpc/server";
-import { and, eq, ilike, inArray, arrayOverlaps } from "drizzle-orm";
+import { eq } from "drizzle-orm";
+import PostService from "@/server/api/services/Post.service";
 
 //TODO: add services here
 export const postRouter = createTRPCRouter({
@@ -31,48 +32,20 @@ export const postRouter = createTRPCRouter({
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { db } = ctx;
-
-      const posts = await db.query.blogPosts.findMany({
-        where: and(ilike(blogPosts.title, `%${input.search}%`)),
-        with: {
-          tagsToBlogPosts: {
-            with: {
-              blogPostTags: true,
-            },
-          },
-        },
-        limit: input.pageSize,
-        offset: input.page * input.pageSize,
-      });
-
-      const postInputTagsSize = input.tagIds.length;
-
-      const postsSortedByTags = posts
-        .filter((post) => {
-          const tagIds = post.tagsToBlogPosts.map((tag) => tag.tagId);
-          if (postInputTagsSize === 0) return true;
-
-          return input.tagIds.some((tagId) => tagIds.includes(tagId));
-        })
-        .sort((postA, postB) => {
-          const aTagIds = postA.tagsToBlogPosts.map((tag) => tag.tagId);
-          const bTagIds = postB.tagsToBlogPosts.map((tag) => tag.tagId);
-
-          return (
-            countHowManyMatches(bTagIds, input.tagIds) -
-            countHowManyMatches(aTagIds, input.tagIds)
-          );
-
-          return 1;
-        });
+      const { posts, pagesLeft } = await PostService.getSortedPosts(
+        input.tagIds,
+        input.page,
+        input.search,
+        input.pageSize,
+      );
 
       return {
         ...input,
-        posts: postsSortedByTags,
-        left: 0,
+        posts,
+        left: pagesLeft,
       };
     }),
+
   getStandardUploadPreassignedUrl: protectedProcedure
     .input(z.object({ imageName: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -190,7 +163,3 @@ export const postRouter = createTRPCRouter({
       return postId;
     }),
 });
-
-function countHowManyMatches(a: number[], b: number[]) {
-  return a.filter((v) => b.includes(v)).length;
-}
