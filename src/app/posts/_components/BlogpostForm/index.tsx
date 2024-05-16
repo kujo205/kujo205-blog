@@ -76,7 +76,7 @@ const BlogPostForm = ({
 
   async function handleAddTag(
     tag: string,
-    cb?: (arg0: TItem[], tagId: number) => void,
+    cb?: (arg0: TItem[], tagId?: number) => void,
   ) {
     addNewTag(
       { tag },

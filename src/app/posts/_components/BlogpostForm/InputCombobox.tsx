@@ -28,7 +28,7 @@ interface InputComboboxProps {
   onSelectedItemsChange: (value: number[]) => void;
   handleAddTag: (
     value: string,
-    cb?: (items: TItem[], insertedTagId: number) => void,
+    cb?: (items: TItem[], insertedTagId?: number) => void,
   ) => void;
 }
 

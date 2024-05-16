@@ -25,6 +25,7 @@ export const postRouter = createTRPCRouter({
   getPosts: publicProcedure
     .input(
       z.object({
+        cursor: z.number().optional(),
         search: z.string(),
         page: z.number(),
         pageSize: z.number(),
@@ -84,7 +85,7 @@ export const postRouter = createTRPCRouter({
           id: blogPostTags.id,
         });
 
-      return result[0]?.id!;
+      return result[0]?.id;
     }),
 
   savePostValuesToSession: adminProcedure

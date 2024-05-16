@@ -1,4 +1,5 @@
 "use client";
+
 import { api } from "@/trpc/react";
 import { PostSearch } from "./_components/PostSearch";
 import { useState } from "react";
@@ -13,12 +14,25 @@ export default function Page() {
     setSearch(value);
   }
 
-  const { data: postsResponse, refetch } = api.post.getPosts.useQuery({
+  const { data: postsResponse, refetch } = api.post.getPosts.useInfiniteQuery({
     page: 0,
     pageSize: 5,
     search: debouncedSearch,
     tagIds: selectedTagIds,
   });
+  //
+  // const { data: postsResponse, refetch } = api.post.getPosts.useQuery(
+  //   {
+  //     cursor: 0,
+  //     page: 0,
+  //     pageSize: 5,
+  //     search: debouncedSearch,
+  //     tagIds: selectedTagIds,
+  //   },
+  //   // {
+  //   //   getNextPageParam: (lastPage) =>
+  //   // },
+  // );
 
   return (
     <main className="flex flex-col items-center px-4 py-16">

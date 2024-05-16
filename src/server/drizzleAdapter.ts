@@ -110,10 +110,11 @@ function drizzleAdapter(client: InstanceType<typeof MySqlDatabase>): Adapter {
           .leftJoin(users, eq(accounts.userId, users.id))
           .then((res) => res[0])) ?? null;
 
-      if (!dbAccount) {
+      if (!dbAccount?.user) {
         return null;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return dbAccount.user;
     },
     async deleteSession(sessionToken) {
