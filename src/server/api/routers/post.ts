@@ -27,23 +27,21 @@ export const postRouter = createTRPCRouter({
       z.object({
         cursor: z.number().optional(),
         search: z.string(),
-        page: z.number(),
         pageSize: z.number(),
         tagIds: z.array(z.number()),
       }),
     )
     .query(async ({ input, ctx }) => {
-      const { posts, pagesLeft } = await PostService.getSortedPosts(
+      const { posts } = await PostService.getSortedPosts(
         input.tagIds,
-        input.page,
         input.search,
         input.pageSize,
+        input.cursor!,
       );
 
       return {
         ...input,
         posts,
-        left: pagesLeft,
       };
     }),
 

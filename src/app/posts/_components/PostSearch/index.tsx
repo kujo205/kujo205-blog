@@ -2,7 +2,6 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { SortOptionsSelect } from "./SortOptionsSelect";
 import { useMemo, type SetStateAction, type Dispatch } from "react";
 import { api } from "@/trpc/react";
 
@@ -41,7 +40,7 @@ function PostSearch({
   }
 
   return (
-    <div className="flex max-w-[1080px] flex-col gap-[16px] 0:w-full">
+    <div className="flex max-w-[1080px] flex-col gap-4 py-4 0:w-full">
       {/* search with select */}
       <div className=" flex justify-between rounded bg-gradient-to-r from-[#4F3ABA] to-[#D94E68] p-[16px] max-sm:flex-col max-sm:gap-[16px]">
         <div className="flex w-full flex-[.55] gap-[8px]">
@@ -53,7 +52,6 @@ function PostSearch({
             <Search onChange={() => onSearchBtnClick()} />
           </Button>
         </div>
-        <SortOptionsSelect className="w-full flex-[.2]" />
       </div>
 
       {/* tags */}

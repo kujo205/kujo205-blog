@@ -1,25 +1,33 @@
 import { db } from "../../db";
-import { ilike, or } from "drizzle-orm";
-import { blogPosts } from "../../db/schema";
+import { ilike, or, and, inArray, gt } from "drizzle-orm";
+import { blogPosts, tagsToBlogPosts } from "../../db/schema";
 
 class PostService {
   public async getSortedPosts(
     tagIds: number[],
-    page: number,
     search: string,
     pageSize: number,
+    cursor: number,
   ) {
     const posts = await db.query.blogPosts.findMany({
-      where: or(
-        ilike(blogPosts.title, `%${search}%`),
-        ilike(blogPosts.content, `%${search}%`),
-        ilike(blogPosts.description, `%${search}%`),
+      limit: pageSize,
+      where: and(
+        cursor ? gt(blogPosts.id, cursor) : undefined,
+        or(
+          ilike(blogPosts.title, `%${search}%`),
+          ilike(blogPosts.content, `%${search}%`),
+          ilike(blogPosts.description, `%${search}%`),
+        ),
       ),
       columns: {
         content: false,
       },
       with: {
         tagsToBlogPosts: {
+          where:
+            tagIds.length > 0
+              ? inArray(tagsToBlogPosts.tagId, tagIds)
+              : undefined,
           with: {
             blogPostTags: true,
           },
@@ -27,37 +35,14 @@ class PostService {
       },
     });
 
-    const postInputTagsSize = tagIds.length;
-
-    const postsSortedByTags = posts
-      .filter((post) => {
-        const tagIds = post.tagsToBlogPosts.map((tag) => tag.tagId);
-        if (postInputTagsSize === 0) return true;
-
-        return tagIds.some((tagId) => tagIds.includes(tagId));
-      })
-      .sort((postA, postB) => {
-        const aTagIds = postA.tagsToBlogPosts.map((tag) => tag.tagId);
-        const bTagIds = postB.tagsToBlogPosts.map((tag) => tag.tagId);
-
-        return (
-          this.countHowManyMatches(bTagIds, tagIds) -
-          this.countHowManyMatches(aTagIds, tagIds)
-        );
-
-        return 1;
-      });
-
-    const postsSlicedByPage = postsSortedByTags.slice(
-      page * pageSize,
-      (page + 1) * pageSize,
-    );
-
-    const pagesLeft = Math.ceil(postsSortedByTags.length / pageSize) - page;
+    const mappedPosts = posts.map((post) => ({
+      ...post,
+      tagsToBlogPosts: undefined,
+      tags: post.tagsToBlogPosts.map((tag) => tag.blogPostTags),
+    }));
 
     return {
-      posts: postsSlicedByPage,
-      pagesLeft,
+      posts: mappedPosts,
     };
   }
 
