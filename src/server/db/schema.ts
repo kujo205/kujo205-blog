@@ -148,3 +148,4 @@ export const messages = pgTable("message", {
 
 export type UserRole = typeof users.$inferSelect.role;
 export type TTag = typeof blogPostTags.$inferSelect;
+export type TBlogPost = typeof blogPosts.$inferSelect;

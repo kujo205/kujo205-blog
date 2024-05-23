@@ -67,6 +67,8 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
         "font-accent": "var(--text-accent)",
+        "purple-accent": "#5D4B74",
+        "gray-neutral": "#7F7F7F",
       },
       borderRadius: {
         lg: "var(--radius)",

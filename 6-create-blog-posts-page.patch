@@ -1,0 +1,1274 @@
+diff --git a/6-craete-blog-posts-page.patch b/6-craete-blog-posts-page.patch
+new file mode 100644
+index 0000000..ee3c6fd
+--- /dev/null
++++ b/6-craete-blog-posts-page.patch
+@@ -0,0 +1,687 @@
++diff --git a/6-craete-blog-posts-page.patch b/6-craete-blog-posts-page.patch
++new file mode 100644
++index 0000000..e8390fb
++--- /dev/null
+++++ b/6-craete-blog-posts-page.patch
++@@ -0,0 +1,100 @@
+++diff --git a/src/app/posts/_components/BlogPostCard/index.tsx b/src/app/posts/_components/BlogPostCard/index.tsx
+++new file mode 100644
+++index 0000000..16460d3
+++--- /dev/null
++++++ b/src/app/posts/_components/BlogPostCard/index.tsx
+++@@ -0,0 +1,58 @@
++++import { type TBlogPost, type TTag } from "@/server/db/schema";
++++import { Icons } from "@/components/icons";
++++import Link from "next/link";
++++const PLACEHOLDER_IMAGE_URL = "/placeholder-blogpost-img.png";
++++
++++export function BlogPostCard({
++++  post,
++++}: {
++++  post: Omit<TBlogPost, "content"> & { tags: TTag[] };
++++}) {
++++  const updatedAt = new Date(post.updatedAt!).toLocaleDateString();
++++
++++  return (
++++    <Link href={`/posts/${post.id}`}>
++++      <article className="max-w-[512px] overflow-hidden rounded-2xl border border-gray-500  bg-slate-50">
++++        <img
++++          src={post.thumbnail ?? PLACEHOLDER_IMAGE_URL}
++++          className="h-[280px] w-full object-cover"
++++        />
++++        <div className="flex flex-col gap-4 overflow-hidden p-4">
++++          <div>
++++            <h1 className="text-2xl font-bold text-violet-600">{post.title}</h1>
++++            {/* actions */}
++++            <div></div>
++++          </div>
++++          <p>{post.description}</p>
++++          <div className="flex flex-wrap gap-2">
++++            {post.tags.map((tag) => (
++++              <span
++++                key={tag.id}
++++                className="text-purple-accent border-purple-accent rounded-[12px] border px-5 py-2"
++++              >
++++                {tag.name}
++++              </span>
++++            ))}
++++          </div>
++++          {/* meta information */}
++++          <div className="flex justify-between">
++++            <span className="text-gray-neutral flex gap-2">
++++              <Icons.Eye />
++++              {post.watched}
++++            </span>
++++            <span>
++++              Last edited:
++++              <span className="font-bold text-pink-500">
++++                {formatISOString(updatedAt)}
++++              </span>
++++            </span>
++++          </div>
++++        </div>
++++      </article>
++++    </Link>
++++  );
++++}
++++
++++function formatISOString(date: string) {
++++  return `  ${new Date(date).toLocaleDateString().toString()}`;
++++}
+++diff --git a/src/schemas-and-types/contact.ts b/src/schemas-and-types/contact.ts
+++new file mode 100644
+++index 0000000..1e734f8
+++--- /dev/null
++++++ b/src/schemas-and-types/contact.ts
+++@@ -0,0 +1,12 @@
++++import z from "zod";
++++export const contactSchema = z.object({
++++  name: z
++++    .string()
++++    .min(1, { message: "Name must be at least 1 character long." }),
++++  email: z.string().email(),
++++  message: z
++++    .string()
++++    .min(1, { message: "Message must be at least 1 character long." }),
++++});
++++
++++export type TContactSchema = z.infer<typeof contactSchema>;
+++diff --git a/src/schemas-and-types/post.ts b/src/schemas-and-types/post.ts
+++new file mode 100644
+++index 0000000..b8f993b
+++--- /dev/null
++++++ b/src/schemas-and-types/post.ts
+++@@ -0,0 +1,12 @@
++++import z from "zod";
++++
++++const postSchema = z.object({
++++  title: z.string(),
++++  content: z.string(),
++++  tags: z.array(z.number()),
++++  thumbnail: z.string().optional(),
++++});
++++
++++type TPostSchema = z.infer<typeof postSchema>;
++++
++++export { postSchema, type TPostSchema };
++diff --git a/drizzle.config.ts b/drizzle.config.ts
++index 89db975..e76bafa 100644
++--- a/drizzle.config.ts
+++++ b/drizzle.config.ts
++@@ -7,6 +7,7 @@ export default {
++   dbCredentials: {
++     connectionString: env.DATABASE_URL,
++   },
+++  verbose: true,
++   driver: "pg",
++   tablesFilter: ["kujo205-blog_*"],
++   out: "./src/server/db",
++diff --git a/package.json b/package.json
++index b07305a..46c9908 100644
++--- a/package.json
+++++ b/package.json
++@@ -54,6 +54,7 @@
++     "react": "18.2.0",
++     "react-dom": "18.2.0",
++     "react-hook-form": "^7.49.3",
+++    "react-intersection-observer": "^9.10.2",
++     "rehype-code-titles": "^1.2.0",
++     "rehype-prism-plus": "^2.0.0",
++     "remark-gfm": "3.0.0",
++diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
++index 6bc4f7b..664092b 100644
++--- a/pnpm-lock.yaml
+++++ b/pnpm-lock.yaml
++@@ -128,6 +128,9 @@ dependencies:
++   react-hook-form:
++     specifier: ^7.49.3
++     version: 7.49.3(react@18.2.0)
+++  react-intersection-observer:
+++    specifier: ^9.10.2
+++    version: 9.10.2(react-dom@18.2.0)(react@18.2.0)
++   rehype-code-titles:
++     specifier: ^1.2.0
++     version: 1.2.0
++@@ -7474,6 +7477,19 @@ packages:
++       react: 18.2.0
++     dev: false
++
+++  /react-intersection-observer@9.10.2(react-dom@18.2.0)(react@18.2.0):
+++    resolution: {integrity: sha512-j2hGADK2hCbAlfaq6L3tVLb4iqngoN7B1fT16MwJ4J16YW/vWLcmAIinLsw0lgpZeMi4UDUWtHC9QDde0/P1yQ==}
+++    peerDependencies:
+++      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+++      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+++    peerDependenciesMeta:
+++      react-dom:
+++        optional: true
+++    dependencies:
+++      react: 18.2.0
+++      react-dom: 18.2.0(react@18.2.0)
+++    dev: false
+++
++   /react-is@16.13.1:
++     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
++     dev: true
++diff --git a/src/app/contacts/_components/ContactMeForm.tsx b/src/app/contacts/_components/ContactMeForm.tsx
++index 6c41c95..70cbb29 100644
++--- a/src/app/contacts/_components/ContactMeForm.tsx
+++++ b/src/app/contacts/_components/ContactMeForm.tsx
++@@ -3,7 +3,10 @@ import { Input, LabelWrapper } from "@/components/ui/input";
++ import { Textarea } from "@/components/ui/textarea";
++ import { Button } from "@/components/ui/button";
++ import { useForm, type SubmitHandler } from "react-hook-form";
++-import { contactSchema, type TContactSchema } from "@/schemas/contact";
+++import {
+++  contactSchema,
+++  type TContactSchema,
+++} from "@/schemas-and-types/contact";
++ import { zodResolver } from "@hookform/resolvers/zod";
++ import { api } from "@/trpc/react";
++ import { type User } from "next-auth";
++diff --git a/src/app/posts/_components/BlogPostCard/index.tsx b/src/app/posts/_components/BlogPostCard/index.tsx
++new file mode 100644
++index 0000000..16460d3
++--- /dev/null
+++++ b/src/app/posts/_components/BlogPostCard/index.tsx
++@@ -0,0 +1,58 @@
+++import { type TBlogPost, type TTag } from "@/server/db/schema";
+++import { Icons } from "@/components/icons";
+++import Link from "next/link";
+++const PLACEHOLDER_IMAGE_URL = "/placeholder-blogpost-img.png";
+++
+++export function BlogPostCard({
+++  post,
+++}: {
+++  post: Omit<TBlogPost, "content"> & { tags: TTag[] };
+++}) {
+++  const updatedAt = new Date(post.updatedAt!).toLocaleDateString();
+++
+++  return (
+++    <Link href={`/posts/${post.id}`}>
+++      <article className="max-w-[512px] overflow-hidden rounded-2xl border border-gray-500  bg-slate-50">
+++        <img
+++          src={post.thumbnail ?? PLACEHOLDER_IMAGE_URL}
+++          className="h-[280px] w-full object-cover"
+++        />
+++        <div className="flex flex-col gap-4 overflow-hidden p-4">
+++          <div>
+++            <h1 className="text-2xl font-bold text-violet-600">{post.title}</h1>
+++            {/* actions */}
+++            <div></div>
+++          </div>
+++          <p>{post.description}</p>
+++          <div className="flex flex-wrap gap-2">
+++            {post.tags.map((tag) => (
+++              <span
+++                key={tag.id}
+++                className="text-purple-accent border-purple-accent rounded-[12px] border px-5 py-2"
+++              >
+++                {tag.name}
+++              </span>
+++            ))}
+++          </div>
+++          {/* meta information */}
+++          <div className="flex justify-between">
+++            <span className="text-gray-neutral flex gap-2">
+++              <Icons.Eye />
+++              {post.watched}
+++            </span>
+++            <span>
+++              Last edited:
+++              <span className="font-bold text-pink-500">
+++                {formatISOString(updatedAt)}
+++              </span>
+++            </span>
+++          </div>
+++        </div>
+++      </article>
+++    </Link>
+++  );
+++}
+++
+++function formatISOString(date: string) {
+++  return `  ${new Date(date).toLocaleDateString().toString()}`;
+++}
++diff --git a/src/app/posts/_components/BlogpostForm/index.tsx b/src/app/posts/_components/BlogpostForm/index.tsx
++index 8403ad6..5e21a53 100644
++--- a/src/app/posts/_components/BlogpostForm/index.tsx
+++++ b/src/app/posts/_components/BlogpostForm/index.tsx
++@@ -1,5 +1,5 @@
++ "use client";
++-import { type TPostSchema, postSchema } from "@/schemas/post";
+++import { type TPostSchema, postSchema } from "@/schemas-and-types/post";
++ import { Controller, useForm } from "react-hook-form";
++ import { Input, LabelWrapper } from "@/components/ui/input";
++ import { zodResolver } from "@hookform/resolvers/zod";
++diff --git a/src/app/posts/_components/PostSearch/SortOptionsSelect.tsx b/src/app/posts/_components/PostSearch/SortOptionsSelect.tsx
++deleted file mode 100644
++index 6b7510e..0000000
++--- a/src/app/posts/_components/PostSearch/SortOptionsSelect.tsx
+++++ /dev/null
++@@ -1,31 +0,0 @@
++-import * as React from "react";
++-
++-import {
++-  Select,
++-  SelectContent,
++-  SelectGroup,
++-  SelectItem,
++-  SelectLabel,
++-  SelectTrigger,
++-  SelectValue,
++-} from "@/components/ui/select";
++-
++-interface SortOptionsSelectProps {
++-  className?: string;
++-}
++-
++-export function SortOptionsSelect({ className }: SortOptionsSelectProps) {
++-  return (
++-    <Select>
++-      <SelectTrigger className={className}>
++-        <SelectValue placeholder="Select a fruit" />
++-      </SelectTrigger>
++-      <SelectContent>
++-        <SelectItem value="liked">Most Liked</SelectItem>
++-        <SelectItem value="popular">Most Popular</SelectItem>
++-        <SelectItem value="new">Newest First</SelectItem>
++-        <SelectItem value="old">Oldest First</SelectItem>
++-      </SelectContent>
++-    </Select>
++-  );
++-}
++diff --git a/src/app/posts/_components/PostSearch/index.tsx b/src/app/posts/_components/PostSearch/index.tsx
++index 8f1cbb5..ed7ec7b 100644
++--- a/src/app/posts/_components/PostSearch/index.tsx
+++++ b/src/app/posts/_components/PostSearch/index.tsx
++@@ -2,7 +2,6 @@
++ import { Input } from "@/components/ui/input";
++ import { Button } from "@/components/ui/button";
++ import { Search } from "lucide-react";
++-import { SortOptionsSelect } from "./SortOptionsSelect";
++ import { useMemo, type SetStateAction, type Dispatch } from "react";
++ import { api } from "@/trpc/react";
++
++@@ -41,7 +40,7 @@ function PostSearch({
++   }
++
++   return (
++-    <div className="flex max-w-[1080px] flex-col gap-[16px] 0:w-full">
+++    <div className="flex max-w-[1080px] flex-col gap-4 py-4 0:w-full">
++       {/* search with select */}
++       <div className=" flex justify-between rounded bg-gradient-to-r from-[#4F3ABA] to-[#D94E68] p-[16px] max-sm:flex-col max-sm:gap-[16px]">
++         <div className="flex w-full flex-[.55] gap-[8px]">
++@@ -53,7 +52,6 @@ function PostSearch({
++             <Search onChange={() => onSearchBtnClick()} />
++           </Button>
++         </div>
++-        <SortOptionsSelect className="w-full flex-[.2]" />
++       </div>
++
++       {/* tags */}
++diff --git a/src/app/posts/create/_components/CreatePostForm.tsx b/src/app/posts/create/_components/CreatePostForm.tsx
++index 9a0cbdc..1f6ddea 100644
++--- a/src/app/posts/create/_components/CreatePostForm.tsx
+++++ b/src/app/posts/create/_components/CreatePostForm.tsx
++@@ -6,7 +6,7 @@ import {
++
++ import { api } from "@/trpc/react";
++ import { toast } from "sonner";
++-import { type TPostSchema } from "@/schemas/post";
+++import { type TPostSchema } from "@/schemas-and-types/post";
++
++ interface CreatePostFormProps
++   extends Omit<BlogpostFormProps, "submitHandler"> {}
++diff --git a/src/app/posts/create/page.tsx b/src/app/posts/create/page.tsx
++index 289b9a0..a7fb8ac 100644
++--- a/src/app/posts/create/page.tsx
+++++ b/src/app/posts/create/page.tsx
++@@ -2,7 +2,7 @@ import { BlogPostForm } from "src/app/posts/_components/BlogpostForm";
++ import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
++ import { PreviewTabTrigger, EditorTabTrigger } from "./_components/TabTriggers";
++ import { api } from "@/trpc/server";
++-import { type TPostSchema } from "@/schemas/post";
+++import { type TPostSchema } from "@/schemas-and-types/post";
++ import { MdPreview } from "@/components/mdPreview";
++ import { CreatePostForm } from "./_components/CreatePostForm";
++
++diff --git a/src/app/posts/page.tsx b/src/app/posts/page.tsx
++index aed530a..b7b4a20 100644
++--- a/src/app/posts/page.tsx
+++++ b/src/app/posts/page.tsx
++@@ -1,9 +1,11 @@
++ "use client";
++-
+++import { useInView } from "react-intersection-observer";
+++import { BlogPostCard } from "./_components/BlogPostCard";
++ import { api } from "@/trpc/react";
++ import { PostSearch } from "./_components/PostSearch";
++ import { useState } from "react";
++ import { useDebounce } from "use-debounce";
+++const PAGE_SIZE = 9;
++
++ export default function Page() {
++   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
++@@ -13,26 +15,32 @@ export default function Page() {
++   function handleSearchValueChange(value: string) {
++     setSearch(value);
++   }
+++  const {
+++    data: postsResponse,
+++    refetch,
+++    fetchNextPage,
+++  } = api.post.getPosts.useInfiniteQuery(
+++    {
+++      pageSize: PAGE_SIZE,
+++      search: debouncedSearch,
+++      tagIds: selectedTagIds,
+++    },
+++    {
+++      initialCursor: 0,
+++      getNextPageParam: (lastPage) => {
+++        const lastPost = lastPage.posts[lastPage.posts.length - 1];
+++        return lastPost?.id;
+++      },
+++    },
+++  );
++
++-  const { data: postsResponse, refetch } = api.post.getPosts.useInfiniteQuery({
++-    page: 0,
++-    pageSize: 5,
++-    search: debouncedSearch,
++-    tagIds: selectedTagIds,
+++  const { ref } = useInView({
+++    /* Optional options */
+++    threshold: 0,
+++    onChange: () => {
+++      fetchNextPage();
+++    },
++   });
++-  //
++-  // const { data: postsResponse, refetch } = api.post.getPosts.useQuery(
++-  //   {
++-  //     cursor: 0,
++-  //     page: 0,
++-  //     pageSize: 5,
++-  //     search: debouncedSearch,
++-  //     tagIds: selectedTagIds,
++-  //   },
++-  //   // {
++-  //   //   getNextPageParam: (lastPage) =>
++-  //   // },
++-  // );
++
++   return (
++     <main className="flex flex-col items-center px-4 py-16">
++@@ -44,9 +52,12 @@ export default function Page() {
++         setSelectedTagIds={setSelectedTagIds}
++         selectedTagIds={selectedTagIds}
++       />
++-      {JSON.stringify(postsResponse, undefined, 2)}
++-      {/*{postsResponse.left}*/}
++-      <h1>Working on it cap</h1>
+++      <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+++        {postsResponse?.pages.map((page) =>
+++          page.posts.map((post) => <BlogPostCard key={post.id} post={post} />),
+++        )}
+++        <div ref={ref} />
+++      </div>
++     </main>
++   );
++ }
++diff --git a/src/app/projects/page.tsx b/src/app/projects/page.tsx
++index 1c1d8b5..5b2c295 100644
++--- a/src/app/projects/page.tsx
+++++ b/src/app/projects/page.tsx
++@@ -3,7 +3,7 @@ import { ProjectCard } from "@/app/projects/_components/ProjectCard";
++
++ export default function Projects() {
++   return (
++-    <main className="grid grid-cols-1 gap-6 px-[60px] py-[80px] sm:grid-cols-2 md:grid-cols-3 md:px-[120px]">
+++    <main className="md:px-30 grid grid-cols-1 gap-6 px-16 py-20 sm:grid-cols-2 md:grid-cols-3">
++       {projects.map((project) => (
++         <ProjectCard project={project} key={project.title} />
++       ))}
++diff --git a/src/components/icons/index.ts b/src/components/icons/index.ts
++index c6fb623..6f2ba24 100644
++--- a/src/components/icons/index.ts
+++++ b/src/components/icons/index.ts
++@@ -5,6 +5,7 @@ import {
++   MousePointerClick,
++   PlusIcon,
++   Search,
+++  Eye,
++ } from "lucide-react";
++
++ export const Icons = {
++@@ -13,4 +14,5 @@ export const Icons = {
++   MousePointerClick,
++   Delete,
++   PlusIcon,
+++  Eye,
++ };
++diff --git a/src/components/mdPreview/index.tsx b/src/components/mdPreview/index.tsx
++index 795a5d2..e2cd5ba 100644
++--- a/src/components/mdPreview/index.tsx
+++++ b/src/components/mdPreview/index.tsx
++@@ -1,5 +1,5 @@
++ import { MDX } from "./components/MDX";
++-import { type TPostSchema } from "@/schemas/post";
+++import { type TPostSchema } from "@/schemas-and-types/post";
++ import { cn } from "@/lib/utils";
++
++ interface MdPreviewProps extends TPostSchema {
++diff --git a/src/schemas/contact.ts b/src/schemas-and-types/contact.ts
++similarity index 100%
++rename from src/schemas/contact.ts
++rename to src/schemas-and-types/contact.ts
++diff --git a/src/schemas/post.ts b/src/schemas-and-types/post.ts
++similarity index 100%
++rename from src/schemas/post.ts
++rename to src/schemas-and-types/post.ts
++diff --git a/src/server/api/routers/contact.ts b/src/server/api/routers/contact.ts
++index 15142f7..aae7059 100644
++--- a/src/server/api/routers/contact.ts
+++++ b/src/server/api/routers/contact.ts
++@@ -1,6 +1,6 @@
++ import { createTRPCRouter } from "@/server/api/trpc";
++ import { publicProcedure } from "@/server/api/trpc";
++-import { contactSchema } from "@/schemas/contact";
+++import { contactSchema } from "@/schemas-and-types/contact";
++ import { messages } from "@/server/db/schema";
++ import TelegramService from "@/server/api/services/Telegram.service";
++ export const contactRouter = createTRPCRouter({
++diff --git a/src/server/api/routers/post.ts b/src/server/api/routers/post.ts
++index 1c4908f..f914735 100644
++--- a/src/server/api/routers/post.ts
+++++ b/src/server/api/routers/post.ts
++@@ -1,6 +1,6 @@
++ import { z } from "zod";
++ import { env } from "@/env";
++-import { postSchema } from "@/schemas/post";
+++import { postSchema } from "@/schemas-and-types/post";
++ import AIService from "@/server/api/services/OpenAI.service";
++ import {
++   createTRPCRouter,
++@@ -19,6 +19,10 @@ import {
++ import { TRPCError } from "@trpc/server";
++ import { eq } from "drizzle-orm";
++ import PostService from "@/server/api/services/Post.service";
+++import {
+++  TSearchConstant,
+++  searchConstants,
+++} from "@/schemas-and-types/postSearch";
++
++ //TODO: add services here
++ export const postRouter = createTRPCRouter({
++@@ -27,23 +31,21 @@ export const postRouter = createTRPCRouter({
++       z.object({
++         cursor: z.number().optional(),
++         search: z.string(),
++-        page: z.number(),
++         pageSize: z.number(),
++         tagIds: z.array(z.number()),
++       }),
++     )
++     .query(async ({ input, ctx }) => {
++-      const { posts, pagesLeft } = await PostService.getSortedPosts(
+++      const { posts } = await PostService.getSortedPosts(
++         input.tagIds,
++-        input.page,
++         input.search,
++         input.pageSize,
+++        input.cursor!,
++       );
++
++       return {
++         ...input,
++         posts,
++-        left: pagesLeft,
++       };
++     }),
++
++diff --git a/src/server/api/services/Post.service.ts b/src/server/api/services/Post.service.ts
++index d9e65e8..f65caae 100644
++--- a/src/server/api/services/Post.service.ts
+++++ b/src/server/api/services/Post.service.ts
++@@ -1,25 +1,33 @@
++ import { db } from "../../db";
++-import { ilike, or } from "drizzle-orm";
++-import { blogPosts } from "../../db/schema";
+++import { ilike, or, and, inArray, gt } from "drizzle-orm";
+++import { blogPosts, tagsToBlogPosts } from "../../db/schema";
++
++ class PostService {
++   public async getSortedPosts(
++     tagIds: number[],
++-    page: number,
++     search: string,
++     pageSize: number,
+++    cursor: number,
++   ) {
++     const posts = await db.query.blogPosts.findMany({
++-      where: or(
++-        ilike(blogPosts.title, `%${search}%`),
++-        ilike(blogPosts.content, `%${search}%`),
++-        ilike(blogPosts.description, `%${search}%`),
+++      limit: pageSize,
+++      where: and(
+++        cursor ? gt(blogPosts.id, cursor) : undefined,
+++        or(
+++          ilike(blogPosts.title, `%${search}%`),
+++          ilike(blogPosts.content, `%${search}%`),
+++          ilike(blogPosts.description, `%${search}%`),
+++        ),
++       ),
++       columns: {
++         content: false,
++       },
++       with: {
++         tagsToBlogPosts: {
+++          where:
+++            tagIds.length > 0
+++              ? inArray(tagsToBlogPosts.tagId, tagIds)
+++              : undefined,
++           with: {
++             blogPostTags: true,
++           },
++@@ -27,37 +35,14 @@ class PostService {
++       },
++     });
++
++-    const postInputTagsSize = tagIds.length;
++-
++-    const postsSortedByTags = posts
++-      .filter((post) => {
++-        const tagIds = post.tagsToBlogPosts.map((tag) => tag.tagId);
++-        if (postInputTagsSize === 0) return true;
++-
++-        return tagIds.some((tagId) => tagIds.includes(tagId));
++-      })
++-      .sort((postA, postB) => {
++-        const aTagIds = postA.tagsToBlogPosts.map((tag) => tag.tagId);
++-        const bTagIds = postB.tagsToBlogPosts.map((tag) => tag.tagId);
++-
++-        return (
++-          this.countHowManyMatches(bTagIds, tagIds) -
++-          this.countHowManyMatches(aTagIds, tagIds)
++-        );
++-
++-        return 1;
++-      });
++-
++-    const postsSlicedByPage = postsSortedByTags.slice(
++-      page * pageSize,
++-      (page + 1) * pageSize,
++-    );
++-
++-    const pagesLeft = Math.ceil(postsSortedByTags.length / pageSize) - page;
+++    const mappedPosts = posts.map((post) => ({
+++      ...post,
+++      tagsToBlogPosts: undefined,
+++      tags: post.tagsToBlogPosts.map((tag) => tag.blogPostTags),
+++    }));
++
++     return {
++-      posts: postsSlicedByPage,
++-      pagesLeft,
+++      posts: mappedPosts,
++     };
++   }
++
++diff --git a/src/server/api/services/Telegram.service.ts b/src/server/api/services/Telegram.service.ts
++index cce8361..bf706ed 100644
++--- a/src/server/api/services/Telegram.service.ts
+++++ b/src/server/api/services/Telegram.service.ts
++@@ -1,5 +1,5 @@
++ import { Telegraf } from "telegraf";
++-import { type TContactSchema } from "@/schemas/contact";
+++import { type TContactSchema } from "@/schemas-and-types/contact";
++ import * as process from "process";
++
++ class TelegramService {
++diff --git a/src/server/auth.ts b/src/server/auth.ts
++index b75acf8..f2d39df 100644
++--- a/src/server/auth.ts
+++++ b/src/server/auth.ts
++@@ -6,7 +6,7 @@ import {
++ import GoogleProvider from "next-auth/providers/google";
++ import drizzleAdapter from "@/server/drizzleAdapter";
++ import { env } from "@/env";
++-import { type TPostSchema } from "@/schemas/post";
+++import { type TPostSchema } from "@/schemas-and-types/post";
++ import { type UserRole } from "@/server/db/schema";
++ import { cookies } from "next/headers";
++
++diff --git a/src/server/db/index.ts b/src/server/db/index.ts
++index b59764d..41cfa36 100644
++--- a/src/server/db/index.ts
+++++ b/src/server/db/index.ts
++@@ -7,4 +7,4 @@ export const connection = postgres(env.DATABASE_URL, {
++   prepare: false,
++ });
++
++-export const db = drizzle(connection, { schema });
+++export const db = drizzle(connection, { schema, logger: true });
++diff --git a/src/server/db/schema.ts b/src/server/db/schema.ts
++index e413ce6..5acb1cd 100644
++--- a/src/server/db/schema.ts
+++++ b/src/server/db/schema.ts
++@@ -148,3 +148,4 @@ export const messages = pgTable("message", {
++
++ export type UserRole = typeof users.$inferSelect.role;
++ export type TTag = typeof blogPostTags.$inferSelect;
+++export type TBlogPost = typeof blogPosts.$inferSelect;
++diff --git a/tailwind.config.ts b/tailwind.config.ts
++index 68c0f74..80de7d9 100644
++--- a/tailwind.config.ts
+++++ b/tailwind.config.ts
++@@ -67,6 +67,8 @@ const config = {
++           foreground: "hsl(var(--card-foreground))",
++         },
++         "font-accent": "var(--text-accent)",
+++        "purple-accent": "#5D4B74",
+++        "gray-neutral": "#7F7F7F",
++       },
++       borderRadius: {
++         lg: "var(--radius)",
+diff --git a/drizzle.config.ts b/drizzle.config.ts
+index 89db975..e76bafa 100644
+--- a/drizzle.config.ts
++++ b/drizzle.config.ts
+@@ -7,6 +7,7 @@ export default {
+   dbCredentials: {
+     connectionString: env.DATABASE_URL,
+   },
++  verbose: true,
+   driver: "pg",
+   tablesFilter: ["kujo205-blog_*"],
+   out: "./src/server/db",
+diff --git a/package.json b/package.json
+index b07305a..46c9908 100644
+--- a/package.json
++++ b/package.json
+@@ -54,6 +54,7 @@
+     "react": "18.2.0",
+     "react-dom": "18.2.0",
+     "react-hook-form": "^7.49.3",
++    "react-intersection-observer": "^9.10.2",
+     "rehype-code-titles": "^1.2.0",
+     "rehype-prism-plus": "^2.0.0",
+     "remark-gfm": "3.0.0",
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 6bc4f7b..664092b 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -128,6 +128,9 @@ dependencies:
+   react-hook-form:
+     specifier: ^7.49.3
+     version: 7.49.3(react@18.2.0)
++  react-intersection-observer:
++    specifier: ^9.10.2
++    version: 9.10.2(react-dom@18.2.0)(react@18.2.0)
+   rehype-code-titles:
+     specifier: ^1.2.0
+     version: 1.2.0
+@@ -7474,6 +7477,19 @@ packages:
+       react: 18.2.0
+     dev: false
+
++  /react-intersection-observer@9.10.2(react-dom@18.2.0)(react@18.2.0):
++    resolution: {integrity: sha512-j2hGADK2hCbAlfaq6L3tVLb4iqngoN7B1fT16MwJ4J16YW/vWLcmAIinLsw0lgpZeMi4UDUWtHC9QDde0/P1yQ==}
++    peerDependencies:
++      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
++      react-dom: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
++    peerDependenciesMeta:
++      react-dom:
++        optional: true
++    dependencies:
++      react: 18.2.0
++      react-dom: 18.2.0(react@18.2.0)
++    dev: false
++
+   /react-is@16.13.1:
+     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
+     dev: true
+diff --git a/src/app/contacts/_components/ContactMeForm.tsx b/src/app/contacts/_components/ContactMeForm.tsx
+index 6c41c95..70cbb29 100644
+--- a/src/app/contacts/_components/ContactMeForm.tsx
++++ b/src/app/contacts/_components/ContactMeForm.tsx
+@@ -3,7 +3,10 @@ import { Input, LabelWrapper } from "@/components/ui/input";
+ import { Textarea } from "@/components/ui/textarea";
+ import { Button } from "@/components/ui/button";
+ import { useForm, type SubmitHandler } from "react-hook-form";
+-import { contactSchema, type TContactSchema } from "@/schemas/contact";
++import {
++  contactSchema,
++  type TContactSchema,
++} from "@/schemas-and-types/contact";
+ import { zodResolver } from "@hookform/resolvers/zod";
+ import { api } from "@/trpc/react";
+ import { type User } from "next-auth";
+diff --git a/src/app/posts/_components/BlogPostCard/index.tsx b/src/app/posts/_components/BlogPostCard/index.tsx
+new file mode 100644
+index 0000000..16460d3
+--- /dev/null
++++ b/src/app/posts/_components/BlogPostCard/index.tsx
+@@ -0,0 +1,58 @@
++import { type TBlogPost, type TTag } from "@/server/db/schema";
++import { Icons } from "@/components/icons";
++import Link from "next/link";
++const PLACEHOLDER_IMAGE_URL = "/placeholder-blogpost-img.png";
++
++export function BlogPostCard({
++  post,
++}: {
++  post: Omit<TBlogPost, "content"> & { tags: TTag[] };
++}) {
++  const updatedAt = new Date(post.updatedAt!).toLocaleDateString();
++
++  return (
++    <Link href={`/posts/${post.id}`}>
++      <article className="max-w-[512px] overflow-hidden rounded-2xl border border-gray-500  bg-slate-50">
++        <img
++          src={post.thumbnail ?? PLACEHOLDER_IMAGE_URL}
++          className="h-[280px] w-full object-cover"
++        />
++        <div className="flex flex-col gap-4 overflow-hidden p-4">
++          <div>
++            <h1 className="text-2xl font-bold text-violet-600">{post.title}</h1>
++            {/* actions */}
++            <div></div>
++          </div>
++          <p>{post.description}</p>
++          <div className="flex flex-wrap gap-2">
++            {post.tags.map((tag) => (
++              <span
++                key={tag.id}
++                className="text-purple-accent border-purple-accent rounded-[12px] border px-5 py-2"
++              >
++                {tag.name}
++              </span>
++            ))}
++          </div>
++          {/* meta information */}
++          <div className="flex justify-between">
++            <span className="text-gray-neutral flex gap-2">
++              <Icons.Eye />
++              {post.watched}
++            </span>
++            <span>
++              Last edited:
++              <span className="font-bold text-pink-500">
++                {formatISOString(updatedAt)}
++              </span>
++            </span>
++          </div>
++        </div>
++      </article>
++    </Link>
++  );
++}
++
++function formatISOString(date: string) {
++  return `  ${new Date(date).toLocaleDateString().toString()}`;
++}
+diff --git a/src/app/posts/_components/BlogpostForm/index.tsx b/src/app/posts/_components/BlogpostForm/index.tsx
+index 8403ad6..5e21a53 100644
+--- a/src/app/posts/_components/BlogpostForm/index.tsx
++++ b/src/app/posts/_components/BlogpostForm/index.tsx
+@@ -1,5 +1,5 @@
+ "use client";
+-import { type TPostSchema, postSchema } from "@/schemas/post";
++import { type TPostSchema, postSchema } from "@/schemas-and-types/post";
+ import { Controller, useForm } from "react-hook-form";
+ import { Input, LabelWrapper } from "@/components/ui/input";
+ import { zodResolver } from "@hookform/resolvers/zod";
+diff --git a/src/app/posts/_components/PostSearch/SortOptionsSelect.tsx b/src/app/posts/_components/PostSearch/SortOptionsSelect.tsx
+deleted file mode 100644
+index 6b7510e..0000000
+--- a/src/app/posts/_components/PostSearch/SortOptionsSelect.tsx
++++ /dev/null
+@@ -1,31 +0,0 @@
+-import * as React from "react";
+-
+-import {
+-  Select,
+-  SelectContent,
+-  SelectGroup,
+-  SelectItem,
+-  SelectLabel,
+-  SelectTrigger,
+-  SelectValue,
+-} from "@/components/ui/select";
+-
+-interface SortOptionsSelectProps {
+-  className?: string;
+-}
+-
+-export function SortOptionsSelect({ className }: SortOptionsSelectProps) {
+-  return (
+-    <Select>
+-      <SelectTrigger className={className}>
+-        <SelectValue placeholder="Select a fruit" />
+-      </SelectTrigger>
+-      <SelectContent>
+-        <SelectItem value="liked">Most Liked</SelectItem>
+-        <SelectItem value="popular">Most Popular</SelectItem>
+-        <SelectItem value="new">Newest First</SelectItem>
+-        <SelectItem value="old">Oldest First</SelectItem>
+-      </SelectContent>
+-    </Select>
+-  );
+-}
+diff --git a/src/app/posts/_components/PostSearch/index.tsx b/src/app/posts/_components/PostSearch/index.tsx
+index 8f1cbb5..ed7ec7b 100644
+--- a/src/app/posts/_components/PostSearch/index.tsx
++++ b/src/app/posts/_components/PostSearch/index.tsx
+@@ -2,7 +2,6 @@
+ import { Input } from "@/components/ui/input";
+ import { Button } from "@/components/ui/button";
+ import { Search } from "lucide-react";
+-import { SortOptionsSelect } from "./SortOptionsSelect";
+ import { useMemo, type SetStateAction, type Dispatch } from "react";
+ import { api } from "@/trpc/react";
+
+@@ -41,7 +40,7 @@ function PostSearch({
+   }
+
+   return (
+-    <div className="flex max-w-[1080px] flex-col gap-[16px] 0:w-full">
++    <div className="flex max-w-[1080px] flex-col gap-4 py-4 0:w-full">
+       {/* search with select */}
+       <div className=" flex justify-between rounded bg-gradient-to-r from-[#4F3ABA] to-[#D94E68] p-[16px] max-sm:flex-col max-sm:gap-[16px]">
+         <div className="flex w-full flex-[.55] gap-[8px]">
+@@ -53,7 +52,6 @@ function PostSearch({
+             <Search onChange={() => onSearchBtnClick()} />
+           </Button>
+         </div>
+-        <SortOptionsSelect className="w-full flex-[.2]" />
+       </div>
+
+       {/* tags */}
+diff --git a/src/app/posts/create/_components/CreatePostForm.tsx b/src/app/posts/create/_components/CreatePostForm.tsx
+index 9a0cbdc..1f6ddea 100644
+--- a/src/app/posts/create/_components/CreatePostForm.tsx
++++ b/src/app/posts/create/_components/CreatePostForm.tsx
+@@ -6,7 +6,7 @@ import {
+
+ import { api } from "@/trpc/react";
+ import { toast } from "sonner";
+-import { type TPostSchema } from "@/schemas/post";
++import { type TPostSchema } from "@/schemas-and-types/post";
+
+ interface CreatePostFormProps
+   extends Omit<BlogpostFormProps, "submitHandler"> {}
+diff --git a/src/app/posts/create/page.tsx b/src/app/posts/create/page.tsx
+index 289b9a0..a7fb8ac 100644
+--- a/src/app/posts/create/page.tsx
++++ b/src/app/posts/create/page.tsx
+@@ -2,7 +2,7 @@ import { BlogPostForm } from "src/app/posts/_components/BlogpostForm";
+ import { Tabs, TabsList, TabsContent } from "@/components/ui/tabs";
+ import { PreviewTabTrigger, EditorTabTrigger } from "./_components/TabTriggers";
+ import { api } from "@/trpc/server";
+-import { type TPostSchema } from "@/schemas/post";
++import { type TPostSchema } from "@/schemas-and-types/post";
+ import { MdPreview } from "@/components/mdPreview";
+ import { CreatePostForm } from "./_components/CreatePostForm";
+
+diff --git a/src/app/posts/page.tsx b/src/app/posts/page.tsx
+index aed530a..b7b4a20 100644
+--- a/src/app/posts/page.tsx
++++ b/src/app/posts/page.tsx
+@@ -1,9 +1,11 @@
+ "use client";
+-
++import { useInView } from "react-intersection-observer";
++import { BlogPostCard } from "./_components/BlogPostCard";
+ import { api } from "@/trpc/react";
+ import { PostSearch } from "./_components/PostSearch";
+ import { useState } from "react";
+ import { useDebounce } from "use-debounce";
++const PAGE_SIZE = 9;
+
+ export default function Page() {
+   const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+@@ -13,26 +15,32 @@ export default function Page() {
+   function handleSearchValueChange(value: string) {
+     setSearch(value);
+   }
++  const {
++    data: postsResponse,
++    refetch,
++    fetchNextPage,
++  } = api.post.getPosts.useInfiniteQuery(
++    {
++      pageSize: PAGE_SIZE,
++      search: debouncedSearch,
++      tagIds: selectedTagIds,
++    },
++    {
++      initialCursor: 0,
++      getNextPageParam: (lastPage) => {
++        const lastPost = lastPage.posts[lastPage.posts.length - 1];
++        return lastPost?.id;
++      },
++    },
++  );
+
+-  const { data: postsResponse, refetch } = api.post.getPosts.useInfiniteQuery({
+-    page: 0,
+-    pageSize: 5,
+-    search: debouncedSearch,
+-    tagIds: selectedTagIds,
++  const { ref } = useInView({
++    /* Optional options */
++    threshold: 0,
++    onChange: () => {
++      fetchNextPage();
++    },
+   });
+-  //
+-  // const { data: postsResponse, refetch } = api.post.getPosts.useQuery(
+-  //   {
+-  //     cursor: 0,
+-  //     page: 0,
+-  //     pageSize: 5,
+-  //     search: debouncedSearch,
+-  //     tagIds: selectedTagIds,
+-  //   },
+-  //   // {
+-  //   //   getNextPageParam: (lastPage) =>
+-  //   // },
+-  // );
+
+   return (
+     <main className="flex flex-col items-center px-4 py-16">
+@@ -44,9 +52,12 @@ export default function Page() {
+         setSelectedTagIds={setSelectedTagIds}
+         selectedTagIds={selectedTagIds}
+       />
+-      {JSON.stringify(postsResponse, undefined, 2)}
+-      {/*{postsResponse.left}*/}
+-      <h1>Working on it cap</h1>
++      <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
++        {postsResponse?.pages.map((page) =>
++          page.posts.map((post) => <BlogPostCard key={post.id} post={post} />),
++        )}
++        <div ref={ref} />
++      </div>
+     </main>
+   );
+ }
+diff --git a/src/app/projects/page.tsx b/src/app/projects/page.tsx
+index 1c1d8b5..5b2c295 100644
+--- a/src/app/projects/page.tsx
++++ b/src/app/projects/page.tsx
+@@ -3,7 +3,7 @@ import { ProjectCard } from "@/app/projects/_components/ProjectCard";
+
+ export default function Projects() {
+   return (
+-    <main className="grid grid-cols-1 gap-6 px-[60px] py-[80px] sm:grid-cols-2 md:grid-cols-3 md:px-[120px]">
++    <main className="md:px-30 grid grid-cols-1 gap-6 px-16 py-20 sm:grid-cols-2 md:grid-cols-3">
+       {projects.map((project) => (
+         <ProjectCard project={project} key={project.title} />
+       ))}
+diff --git a/src/components/icons/index.ts b/src/components/icons/index.ts
+index c6fb623..6f2ba24 100644
+--- a/src/components/icons/index.ts
++++ b/src/components/icons/index.ts
+@@ -5,6 +5,7 @@ import {
+   MousePointerClick,
+   PlusIcon,
+   Search,
++  Eye,
+ } from "lucide-react";
+
+ export const Icons = {
+@@ -13,4 +14,5 @@ export const Icons = {
+   MousePointerClick,
+   Delete,
+   PlusIcon,
++  Eye,
+ };
+diff --git a/src/components/mdPreview/index.tsx b/src/components/mdPreview/index.tsx
+index 795a5d2..e2cd5ba 100644
+--- a/src/components/mdPreview/index.tsx
++++ b/src/components/mdPreview/index.tsx
+@@ -1,5 +1,5 @@
+ import { MDX } from "./components/MDX";
+-import { type TPostSchema } from "@/schemas/post";
++import { type TPostSchema } from "@/schemas-and-types/post";
+ import { cn } from "@/lib/utils";
+
+ interface MdPreviewProps extends TPostSchema {
+diff --git a/src/schemas/contact.ts b/src/schemas-and-types/contact.ts
+similarity index 100%
+rename from src/schemas/contact.ts
+rename to src/schemas-and-types/contact.ts
+diff --git a/src/schemas/post.ts b/src/schemas-and-types/post.ts
+similarity index 100%
+rename from src/schemas/post.ts
+rename to src/schemas-and-types/post.ts
+diff --git a/src/server/api/routers/contact.ts b/src/server/api/routers/contact.ts
+index 15142f7..aae7059 100644
+--- a/src/server/api/routers/contact.ts
++++ b/src/server/api/routers/contact.ts
+@@ -1,6 +1,6 @@
+ import { createTRPCRouter } from "@/server/api/trpc";
+ import { publicProcedure } from "@/server/api/trpc";
+-import { contactSchema } from "@/schemas/contact";
++import { contactSchema } from "@/schemas-and-types/contact";
+ import { messages } from "@/server/db/schema";
+ import TelegramService from "@/server/api/services/Telegram.service";
+ export const contactRouter = createTRPCRouter({
+diff --git a/src/server/api/routers/post.ts b/src/server/api/routers/post.ts
+index 1c4908f..f914735 100644
+--- a/src/server/api/routers/post.ts
++++ b/src/server/api/routers/post.ts
+@@ -1,6 +1,6 @@
+ import { z } from "zod";
+ import { env } from "@/env";
+-import { postSchema } from "@/schemas/post";
++import { postSchema } from "@/schemas-and-types/post";
+ import AIService from "@/server/api/services/OpenAI.service";
+ import {
+   createTRPCRouter,
+@@ -19,6 +19,10 @@ import {
+ import { TRPCError } from "@trpc/server";
+ import { eq } from "drizzle-orm";
+ import PostService from "@/server/api/services/Post.service";
++import {
++  TSearchConstant,
++  searchConstants,
++} from "@/schemas-and-types/postSearch";
+
+ //TODO: add services here
+ export const postRouter = createTRPCRouter({
+@@ -27,23 +31,21 @@ export const postRouter = createTRPCRouter({
+       z.object({
+         cursor: z.number().optional(),
+         search: z.string(),
+-        page: z.number(),
+         pageSize: z.number(),
+         tagIds: z.array(z.number()),
+       }),
+     )
+     .query(async ({ input, ctx }) => {
+-      const { posts, pagesLeft } = await PostService.getSortedPosts(
++      const { posts } = await PostService.getSortedPosts(
+         input.tagIds,
+-        input.page,
+         input.search,
+         input.pageSize,
++        input.cursor!,
+       );
+
+       return {
+         ...input,
+         posts,
+-        left: pagesLeft,
+       };
+     }),
+
+diff --git a/src/server/api/services/Post.service.ts b/src/server/api/services/Post.service.ts
+index d9e65e8..f65caae 100644
+--- a/src/server/api/services/Post.service.ts
++++ b/src/server/api/services/Post.service.ts
+@@ -1,25 +1,33 @@
+ import { db } from "../../db";
+-import { ilike, or } from "drizzle-orm";
+-import { blogPosts } from "../../db/schema";
++import { ilike, or, and, inArray, gt } from "drizzle-orm";
++import { blogPosts, tagsToBlogPosts } from "../../db/schema";
+
+ class PostService {
+   public async getSortedPosts(
+     tagIds: number[],
+-    page: number,
+     search: string,
+     pageSize: number,
++    cursor: number,
+   ) {
+     const posts = await db.query.blogPosts.findMany({
+-      where: or(
+-        ilike(blogPosts.title, `%${search}%`),
+-        ilike(blogPosts.content, `%${search}%`),
+-        ilike(blogPosts.description, `%${search}%`),
++      limit: pageSize,
++      where: and(
++        cursor ? gt(blogPosts.id, cursor) : undefined,
++        or(
++          ilike(blogPosts.title, `%${search}%`),
++          ilike(blogPosts.content, `%${search}%`),
++          ilike(blogPosts.description, `%${search}%`),
++        ),
+       ),
+       columns: {
+         content: false,
+       },
+       with: {
+         tagsToBlogPosts: {
++          where:
++            tagIds.length > 0
++              ? inArray(tagsToBlogPosts.tagId, tagIds)
++              : undefined,
+           with: {
+             blogPostTags: true,
+           },
+@@ -27,37 +35,14 @@ class PostService {
+       },
+     });
+
+-    const postInputTagsSize = tagIds.length;
+-
+-    const postsSortedByTags = posts
+-      .filter((post) => {
+-        const tagIds = post.tagsToBlogPosts.map((tag) => tag.tagId);
+-        if (postInputTagsSize === 0) return true;
+-
+-        return tagIds.some((tagId) => tagIds.includes(tagId));
+-      })
+-      .sort((postA, postB) => {
+-        const aTagIds = postA.tagsToBlogPosts.map((tag) => tag.tagId);
+-        const bTagIds = postB.tagsToBlogPosts.map((tag) => tag.tagId);
+-
+-        return (
+-          this.countHowManyMatches(bTagIds, tagIds) -
+-          this.countHowManyMatches(aTagIds, tagIds)
+-        );
+-
+-        return 1;
+-      });
+-
+-    const postsSlicedByPage = postsSortedByTags.slice(
+-      page * pageSize,
+-      (page + 1) * pageSize,
+-    );
+-
+-    const pagesLeft = Math.ceil(postsSortedByTags.length / pageSize) - page;
++    const mappedPosts = posts.map((post) => ({
++      ...post,
++      tagsToBlogPosts: undefined,
++      tags: post.tagsToBlogPosts.map((tag) => tag.blogPostTags),
++    }));
+
+     return {
+-      posts: postsSlicedByPage,
+-      pagesLeft,
++      posts: mappedPosts,
+     };
+   }
+
+diff --git a/src/server/api/services/Telegram.service.ts b/src/server/api/services/Telegram.service.ts
+index cce8361..bf706ed 100644
+--- a/src/server/api/services/Telegram.service.ts
++++ b/src/server/api/services/Telegram.service.ts
+@@ -1,5 +1,5 @@
+ import { Telegraf } from "telegraf";
+-import { type TContactSchema } from "@/schemas/contact";
++import { type TContactSchema } from "@/schemas-and-types/contact";
+ import * as process from "process";
+
+ class TelegramService {
+diff --git a/src/server/auth.ts b/src/server/auth.ts
+index b75acf8..f2d39df 100644
+--- a/src/server/auth.ts
++++ b/src/server/auth.ts
+@@ -6,7 +6,7 @@ import {
+ import GoogleProvider from "next-auth/providers/google";
+ import drizzleAdapter from "@/server/drizzleAdapter";
+ import { env } from "@/env";
+-import { type TPostSchema } from "@/schemas/post";
++import { type TPostSchema } from "@/schemas-and-types/post";
+ import { type UserRole } from "@/server/db/schema";
+ import { cookies } from "next/headers";
+
+diff --git a/src/server/db/index.ts b/src/server/db/index.ts
+index b59764d..41cfa36 100644
+--- a/src/server/db/index.ts
++++ b/src/server/db/index.ts
+@@ -7,4 +7,4 @@ export const connection = postgres(env.DATABASE_URL, {
+   prepare: false,
+ });
+
+-export const db = drizzle(connection, { schema });
++export const db = drizzle(connection, { schema, logger: true });
+diff --git a/src/server/db/schema.ts b/src/server/db/schema.ts
+index e413ce6..5acb1cd 100644
+--- a/src/server/db/schema.ts
++++ b/src/server/db/schema.ts
+@@ -148,3 +148,4 @@ export const messages = pgTable("message", {
+
+ export type UserRole = typeof users.$inferSelect.role;
+ export type TTag = typeof blogPostTags.$inferSelect;
++export type TBlogPost = typeof blogPosts.$inferSelect;
+diff --git a/tailwind.config.ts b/tailwind.config.ts
+index 68c0f74..80de7d9 100644
+--- a/tailwind.config.ts
++++ b/tailwind.config.ts
+@@ -67,6 +67,8 @@ const config = {
+           foreground: "hsl(var(--card-foreground))",
+         },
+         "font-accent": "var(--text-accent)",
++        "purple-accent": "#5D4B74",
++        "gray-neutral": "#7F7F7F",
+       },
+       borderRadius: {
+         lg: "var(--radius)",

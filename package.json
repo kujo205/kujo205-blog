@@ -55,6 +55,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-hook-form": "^7.49.3",
+    "react-intersection-observer": "^9.10.2",
     "rehype-code-titles": "^1.2.0",
     "rehype-prism-plus": "^2.0.0",
     "remark-gfm": "3.0.0",

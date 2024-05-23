@@ -5,6 +5,7 @@ import {
   MousePointerClick,
   PlusIcon,
   Search,
+  Eye,
 } from "lucide-react";
 
 export const Icons = {
@@ -13,4 +14,5 @@ export const Icons = {
   MousePointerClick,
   Delete,
   PlusIcon,
+  Eye,
 };

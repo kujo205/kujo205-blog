@@ -7,6 +7,7 @@ export default {
   dbCredentials: {
     connectionString: env.DATABASE_URL,
   },
+  verbose: true,
   driver: "pg",
   tablesFilter: ["kujo205-blog_*"],
   out: "./src/server/db",
