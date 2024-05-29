@@ -31,6 +31,7 @@ export const OpenMobileHeaderButtonAndMobileHeader = ({
       <SheetContent>
         <nav className="flex flex-col gap-1">
           {getHeaderItems(role).map((navItem) => (
+
             <SheetClose asChild key={navItem.url}>
               <Link href={navItem.url}>
                 <Button
