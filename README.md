@@ -1,28 +1,36 @@
-# Create T3 App
+# Personal portfolio site-blog
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+This is a `portfolio site` with the `blog` created using `T3 stack`
 
-## What's next? How do I make an app with this?
+The site was created and is maintaned by `@kujo205` and `@Andry925`
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
-
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## What technologies were used?
 
 - [Next.js](https://nextjs.org)
 - [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
+- [Drizzle](https://orm.drizzle.team/)
 - [Tailwind CSS](https://tailwindcss.com)
 - [tRPC](https://trpc.io)
+- [Playwright](https://playwright.dev/)
 
-## Learn More
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## What side services were used?
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+- [AWS S3](https://aws.amazon.com/s3/)
+- [OpenAI API](https://platform.openai.com/docs/overview)
+- [Figma](https://www.figma.com/)
+- [Google's Oauth protocol](https://developers.google.com/identity/protocols/oauth2)
+- [Telegraf](https://www.npmjs.com/package/telegraf)
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
 
-## How do I deploy this?
-
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+## Milestones
+- [ ] Create `about` page
+- [ ] Create `projects` page
+- [ ] Create `blog posts` page
+- [ ] Create `personal blog page` page
+- [ ] Add ablity to comment
+- [ ] Create a page where admins can create and preview posts, assign tags to the posts
+- [ ] Create a page where admins can update posts
+- [ ] Add ability to delete posts
+- [ ] Add ability to like posts
+- [ ] Statitics of how many people hava seen the post
