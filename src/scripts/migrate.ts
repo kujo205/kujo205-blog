@@ -1,9 +1,17 @@
 import "dotenv/config";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { db } from "@/server/db";
+import * as process from "node:process";
 
-// TODO: figure out how to make migrations work
-import { migrate } from "drizzle-orm/planetscale-serverless/migrator";
-import { db, connection } from "../server/db";
-// This will run migrations on the database, skipping the ones already applied
-await migrate(db, { migrationsFolder: "./drizzle" });
-// Don't forget to close the connection, otherwise the script will hang
-await connection.refresh();
+async function dbMigrate() {
+  try {
+    console.log("Migrating database...");
+    await migrate(db, { migrationsFolder: "src/server/db" });
+    console.log("Database migrated successfully!");
+    process.exit(0);
+  } catch (error) {
+    console.error("Error migrating database:", error);
+  }
+}
+
+dbMigrate();

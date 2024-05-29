@@ -1,4 +1,6 @@
-export const header = [
+import { type UserRole } from "@/server/db/schema";
+
+const defaultHeader = [
   {
     name: "About",
     url: "/",
@@ -16,6 +18,17 @@ export const header = [
     url: "/projects",
   },
 ];
+
+const adminHeader = [
+  {
+    name: "Create a post",
+    url: "/posts/create",
+  },
+];
+
+export const getHeaderItems = (role?: UserRole | null) => {
+  return role === "ADMIN" ? [...defaultHeader, ...adminHeader] : defaultHeader;
+};
 
 export const socialMediaLinks = {
   github: "https://github.com/kujo205",

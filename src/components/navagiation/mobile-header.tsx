@@ -8,10 +8,15 @@ import {
 } from "@/components/ui/sheet";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
-import { header } from "@/config/general";
+import { getHeaderItems } from "@/config/general";
 import Link from "next/link";
+import { type UserRole } from "@/server/db/schema";
 
-export const OpenMobileHeaderButtonAndMobileHeader = () => {
+export const OpenMobileHeaderButtonAndMobileHeader = ({
+  role,
+}: {
+  role?: UserRole | null;
+}) => {
   const pathname = usePathname();
   return (
     <Sheet>
@@ -24,8 +29,9 @@ export const OpenMobileHeaderButtonAndMobileHeader = () => {
         <Icons.Menu />
       </SheetTrigger>
       <SheetContent>
-        <nav className="flex flex-col">
-          {header.map((navItem) => (
+        <nav className="flex flex-col gap-1">
+          {getHeaderItems(role).map((navItem) => (
+
             <SheetClose asChild key={navItem.url}>
               <Link href={navItem.url}>
                 <Button

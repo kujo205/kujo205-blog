@@ -60,6 +60,7 @@ export default async function Home() {
           My <span className="accent-text">career path</span>
         </h2>
         <div>
+          {/* TODO: rewrite this to use components with text */}
           <Image
             src={"/pages/about/timeline.svg"}
             alt={"Career timeline"}

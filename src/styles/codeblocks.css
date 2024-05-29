@@ -1,0 +1,7 @@
+@import "prismjs/themes/prism-tomorrow.css";
+
+pre[class*="language-"] {
+    padding: 1em;
+    margin: 0;
+    overflow: auto;
+}

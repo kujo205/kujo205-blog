@@ -7,13 +7,8 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z
-      .string()
-      .url()
-      .refine(
-        (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
-        "You forgot to change the default URL",
-      ),
+    OPENAI_API_KEY: z.string(),
+    DATABASE_URL: z.string(),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
@@ -32,6 +27,10 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string(),
     TELEGRAM_BOT_TOKEN: z.string(),
     MY_TELEGRAM_CHAT_ID: z.string(),
+    S3_ACCESS_KEY: z.string(),
+    S3_SECRET_ACCESS_KEY: z.string(),
+    AWS_REGION: z.string(),
+    BUCKET_NAME: z.string(),
   },
 
   /**
@@ -48,6 +47,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
     DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
     NEXTAUTH_SECRET: process.env.NEXTAUTH_SECRET,
@@ -56,6 +56,10 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN,
     MY_TELEGRAM_CHAT_ID: process.env.MY_TELEGRAM_CHAT_ID,
+    S3_ACCESS_KEY: process.env.S3_ACCESS_KEY,
+    S3_SECRET_ACCESS_KEY: process.env.S3_SECRET_ACCESS_KEY,
+    AWS_REGION: process.env.AWS_REGION,
+    BUCKET_NAME: process.env.BUCKET_NAME,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

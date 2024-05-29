@@ -10,11 +10,22 @@ const config = {
   ],
   prefix: "",
   theme: {
+    screens: {
+      0: "0px",
+      sm: "576px",
+      // => @media (min-width: 576px) { ... }
+
+      md: "960px",
+      // => @media (min-width: 960px) { ... }
+
+      lg: "1440px",
+      // => @media
+    },
     container: {
       center: true,
       padding: "2rem",
       screens: {
-        "2xl": "1400px",
+        lg: "1400px",
       },
     },
     extend: {
@@ -56,6 +67,8 @@ const config = {
           foreground: "hsl(var(--card-foreground))",
         },
         "font-accent": "var(--text-accent)",
+        "purple-accent": "#5D4B74",
+        "gray-neutral": "#7F7F7F",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -81,7 +94,7 @@ const config = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("@tailwindcss/typography"), require("tailwindcss-animate")],
 } satisfies Config;
 
 export default config;

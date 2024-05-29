@@ -1,0 +1,1 @@
+ALTER TABLE "kujo205_blog_blogPost" ALTER COLUMN "description" SET DATA TYPE text;

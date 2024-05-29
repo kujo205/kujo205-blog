@@ -1,0 +1,1 @@
+ALTER TABLE "kujo205_blog_blogPost" ADD COLUMN "thumbnail" varchar(255);

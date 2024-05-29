@@ -1,0 +1,1 @@
+ALTER TABLE "kujo205_blog_postTag" ALTER COLUMN "name" SET NOT NULL;

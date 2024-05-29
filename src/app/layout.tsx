@@ -1,10 +1,12 @@
+import "prismjs";
 import "@/styles/globals.css";
 import { Header } from "@/components/navagiation/header";
-
 import { Footer } from "@/components/navagiation/footer";
 import { Inter } from "next/font/google";
-
+import { getServerAuthSession } from "@/server/auth";
 import { TRPCReactProvider } from "@/trpc/react";
+import PrismJsProvider from "@/providers/PrismJsProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -17,20 +19,32 @@ export const metadata = {
   icons: [{ rel: "icon", url: "/favicon.ico" }],
 };
 
-export default function RootLayout({
+//TODO: move to local postgress db and host on AWS
+
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await getServerAuthSession();
+
   return (
     <html lang="en">
       <body
         className={`font-sans ${inter.variable} flex min-h-screen flex-col`}
       >
         <TRPCReactProvider>
-          <Header />
-          {children}
-          <Footer />
+          <PrismJsProvider>
+            <Toaster
+              position="bottom-center"
+              richColors={true}
+              theme="light"
+              closeButton
+            />
+            <Header session={session} />
+            {children}
+            <Footer />
+          </PrismJsProvider>
         </TRPCReactProvider>
       </body>
     </html>
