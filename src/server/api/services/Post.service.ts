@@ -1,5 +1,5 @@
 import { db } from "../../db";
-import { ilike, or, and, inArray, gt } from "drizzle-orm";
+import { ilike, or, and, inArray, gt, eq } from "drizzle-orm";
 import { blogPosts, tagsToBlogPosts } from "../../db/schema";
 
 class PostService {
@@ -46,8 +46,20 @@ class PostService {
     };
   }
 
-  private countHowManyMatches(a: number[], b: number[]) {
-    return a.filter((v) => b.includes(v)).length;
+  public async getPostById(postId: number) {
+    const post = await db.query.blogPosts.findFirst({
+      where: eq(blogPosts.id, postId),
+      with: {
+        tagsToBlogPosts: {
+          with: {
+            blogPostTags: true,
+          },
+        },
+        // comments: true,
+      },
+    });
+
+    return post;
   }
 }
 

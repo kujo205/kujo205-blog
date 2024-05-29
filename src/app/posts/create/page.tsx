@@ -31,7 +31,10 @@ export default async function Page({
           <CreatePostForm defaultValues={defaultFormValues} />
         </TabsContent>
         <TabsContent value="preview">
-          <MdPreview {...defaultFormValues} />
+          <MdPreview
+            content={defaultFormValues.content}
+            title={defaultFormValues.title}
+          />
         </TabsContent>
       </Tabs>
     </main>

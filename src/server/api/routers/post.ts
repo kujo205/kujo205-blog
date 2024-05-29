@@ -161,4 +161,17 @@ export const postRouter = createTRPCRouter({
       const result = await Promise.all(insertStatements);
       return postId;
     }),
+
+  getPostById: publicProcedure
+    .input(
+      z.object({
+        postId: z.number(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const post = await PostService.getPostById(input.postId);
+      return {
+        post,
+      };
+    }),
 });
