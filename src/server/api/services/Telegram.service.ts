@@ -8,6 +8,7 @@ class TelegramService {
   constructor() {
     this.bot = new Telegraf(process.env.TELEGRAM_BOT_TOKEN!);
   }
+
   public async sendMessage(contactInfo: TContactSchema) {
     await this.bot.telegram.sendMessage(
       process.env.MY_TELEGRAM_CHAT_ID!,
