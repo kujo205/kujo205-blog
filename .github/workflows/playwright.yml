@@ -21,7 +21,7 @@ jobs:
       run: pnpm exec playwright test
       env:
         PLAYWRIGHT_TEST_BASE_URL: ${{ github.event.deployment_status.target_url }}
-    - uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v5
       if: always()
       with:
         name: playwright-report
